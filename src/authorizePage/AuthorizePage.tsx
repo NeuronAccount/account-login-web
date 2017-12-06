@@ -77,6 +77,17 @@ class AuthorizePage extends React.Component<Props, State> {
 
     onLoginSuccess(jwt: string) {
         console.log('onLoginSuccess', jwt);
+
+        try {
+            window.parent.postMessage(
+                {
+                    type: 'onLoginSuccess',
+                    payload: jwt
+                },
+                'http://localhost:3000');
+        } catch (ex) {
+            console.log(ex);
+        }
     }
 
     onApiError(err: ApiError) {
@@ -102,6 +113,11 @@ class AuthorizePage extends React.Component<Props, State> {
         },                          200);
 
         this.setState({inputErrorTimer: t});
+    }
+
+    enterSignup(signup: boolean) {
+        this.setState({isSignupView: signup});
+        this.onLoginInputError('');
     }
 
     renderSmsSignup() {
@@ -137,7 +153,7 @@ class AuthorizePage extends React.Component<Props, State> {
                         }}
                     />
                     <Button
-                        style={{float: 'right', marginTop: '30px', backgroundColor: '#3487ff', color: '#FFF'}}
+                        style={{float: 'right', marginTop: '30px', backgroundColor: '#86ce2f', color: '#FFF'}}
                         onClick={() => {
                             if (this.state.signupPhone == null || this.state.signupPhone === '') {
                                 return this.onLoginInputError('！请输入手机号');
@@ -156,7 +172,7 @@ class AuthorizePage extends React.Component<Props, State> {
                     </Button>
                 </div>
                 <Button
-                    style={{backgroundColor: '#3487ff', color: '#FFF', width: '100%', marginTop: '20px'}}
+                    style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '20px'}}
                     onClick={() => {
                         if (this.state.signupPhone == null || this.state.signupPhone === '') {
                             return this.onLoginInputError('！请输入手机号');
@@ -179,7 +195,7 @@ class AuthorizePage extends React.Component<Props, State> {
                                                 this.onApiError);
                     }}
                 >
-                    <label style={{fontSize: 'xx-large'}}>注 册</label>
+                    <label style={{fontSize: 'large'}}>注册并授权登录</label>
                 </Button>
             </div>
         );
@@ -187,49 +203,29 @@ class AuthorizePage extends React.Component<Props, State> {
 
     renderSignup() {
         return (
-            <div>
-                <Button
-                    dense={true}
-                    style={{float: 'left'}}
-                    onClick={() => {
-                        this.setState({isSignupView: false});
-                        this.onLoginInputError('');
-                    }}
-                >
-                    <label style={{color: '#EEE'}}>返回</label>
-                </Button>
-                <label
-                    style={{
-                        width: '300px',
-                        position: 'absolute',
-                        margin: 'auto',
-                        top: '120px',
-                        left: 0,
-                        right: 0,
-                        display: 'inline-block',
-                        fontSize: 'xx-large',
-                        textAlign: 'center',
-                        color: '#FFF'
-                    }}
-                >
-                    注册火星帐号
-                </label>
-                <div
-                    style={{
-                        width: '300px',
-                        backgroundColor: '#FFF',
-                        position: 'absolute',
-                        margin: 'auto',
-                        left: 0,
-                        right: 0,
-                        top: '200px'
-                    }}
-                >
-                    <div style={{marginLeft: '20px', marginRight: '20px', marginBottom: '20px'}}>
-                        <div style={{marginTop: '5px', height: '10px'}}>
-                            <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
-                        </div>
-                        {this.renderSmsSignup()}
+            <div
+                style={{
+                    width: '300px',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: '20px',
+                }}
+            >
+                <div style={{marginLeft: '20px', marginRight: '20px', marginBottom: '20px'}}>
+                    <div style={{marginTop: '5px', height: '10px'}}>
+                        <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
+                    </div>
+                    {this.renderSmsSignup()}
+                </div>
+                <div style={{marginTop: '30px', fontSize: 'small'}}>
+                    <div style={{float: 'right'}}>
+                        <label
+                            onClick={() => {
+                                this.enterSignup(false);
+                            }}
+                        >
+                            返回登录
+                        </label>
                     </div>
                 </div>
             </div>
@@ -259,7 +255,7 @@ class AuthorizePage extends React.Component<Props, State> {
                     }}
                 />
                 <Button
-                    style={{backgroundColor: '#3487ff', color: '#FFF', width: '100%', marginTop: '20px'}}
+                    style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '20px'}}
                     onClick={() => {
                         if (this.state.loginName == null || this.state.loginName === '') {
                             return this.onLoginInputError('！请输入手机号');
@@ -278,7 +274,7 @@ class AuthorizePage extends React.Component<Props, State> {
                         );
                     }}
                 >
-                    <label style={{fontSize: 'xx-large'}}>登 录</label>
+                    <label style={{fontSize: 'large'}}>授权并登录</label>
                 </Button>
             </div>
         );
@@ -307,7 +303,7 @@ class AuthorizePage extends React.Component<Props, State> {
                         }}
                     />
                     <Button
-                        style={{float: 'right', marginTop: '30px', backgroundColor: '#3487ff', color: '#FFF'}}
+                        style={{float: 'right', marginTop: '30px', backgroundColor: '#86ce2f', color: '#FFF'}}
                         onClick={() => {
                             if (this.state.loginPhone == null || this.state.loginPhone === '') {
                                 return this.onLoginInputError('！请输入手机号');
@@ -322,7 +318,7 @@ class AuthorizePage extends React.Component<Props, State> {
                     </Button>
                 </div>
                 <Button
-                    style={{backgroundColor: '#3487ff', color: '#FFF', width: '100%', marginTop: '20px'}}
+                    style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '20px'}}
                     onClick={() => {
                         if (this.state.loginPhone == null || this.state.loginPhone === '') {
                             return this.onLoginInputError('！请输入手机号');
@@ -341,92 +337,98 @@ class AuthorizePage extends React.Component<Props, State> {
                         );
                     }}
                 >
-                    <label style={{fontSize: 'xx-large'}}>登 录</label>
+                    <label style={{fontSize: 'large'}}>授权并登录</label>
                 </Button>
-            </div>
-        );
-    }
-
-    renderLogin() {
-        return (
-            <div>
-                <Button
-                    dense={true}
-                    style={{float: 'right'}}
-                    onClick={() => {
-                    this.setState({isSignupView: true});
-                    this.onLoginInputError('');
-                }}
-                >
-                    <label style={{color: '#EEE'}}>新用户注册</label>
-                </Button>
-                <label
-                    style={{
-                    width: '300px',
-                    position: 'absolute',
-                    margin: 'auto',
-                    top: '120px',
-                    left: 0,
-                    right: 0,
-                    display: 'inline-block',
-                    fontSize: 'xx-large',
-                    textAlign: 'center',
-                    color: '#FFF'
-                }}
-                >
-                    登录火星帐号
-                </label>
-                <div
-                    style={{
-                    width: '300px',
-                    backgroundColor: '#FFF',
-                    position: 'absolute',
-                    margin: 'auto',
-                    left: 0,
-                    right: 0,
-                    top: '200px'
-                }}
-                >
-                    <Tabs
-                        value={this.state.loginTabIndex}
-                        fullWidth={true}
-                        onChange={(event: {}, v: number) => {
-                            this.setState({loginTabIndex: v});
-                            this.onLoginInputError('');
-                        }}
-                    >
-                        <Tab label="密码登录"/>
-                        <Tab label="短信验证码登录"/>
-                    </Tabs>
-                    <div style={{marginLeft: '20px', marginRight: '20px', marginBottom: '20px'}}>
-                        <div style={{marginTop: '5px', height: '10px'}}>
-                            <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
-                        </div>
-                        {this.state.loginTabIndex === 0 && this.renderAccountLogin()}
-                        {this.state.loginTabIndex === 1 && this.renderSmsLogin()}
-                    </div>
-                </div>
             </div>
         );
     }
 
     render() {
         return (
-            <div>
-                <div
-                    style={{
-                        maxWidth: '480px',
-                        maxHeight: '600px',
-                        backgroundColor: '#333',
-                        position: 'absolute',
-                        margin: 'auto',
-                        top: '0',
-                        bottom: '0',
-                        left: '0',
-                        right: '0'
+            <div
+                style={{
+                    width: '300px',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: '20px',
+                }}
+            >
+                <Tabs
+                    value={this.state.loginTabIndex}
+                    fullWidth={true}
+                    onChange={(event: {}, v: number) => {
+                        this.setState({loginTabIndex: v});
+                        this.onLoginInputError('');
                     }}
                 >
-                    {this.state.isSignupView ? this.renderSignup() : this.renderLogin()}
+                    <Tab label="帐号密码登录"/>
+                    <Tab label="短信验证码登录"/>
+                </Tabs>
+                <div style={{marginLeft: '20px', marginRight: '20px', marginBottom: '20px'}}>
+                    <div style={{marginTop: '5px', height: '10px'}}>
+                        <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
+                    </div>
+                    {this.state.loginTabIndex === 0 && this.renderAccountLogin()}
+                    {this.state.loginTabIndex === 1 && this.renderSmsLogin()}
+                </div>
+                <div style={{fontSize: 'small', height: '20px'}}>
+                    <div style={{float: 'right'}}>
+                        <a
+                            href="http://qq.com"
+                            target="_blank"
+                            style={{textDecoration: 'none'}}
+                        >
+                            忘了密码？
+                        </a>
+                        <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                        <a
+                            href="http://qq.com"
+                            target="_blank"
+                            style={{textDecoration: 'none'}}
+                        >
+                            注册新帐号
+                        </a>
+                        <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                        <a
+                            href="http://qq.com"
+                            target="_blank"
+                            style={{textDecoration: 'none'}}
+                        >
+                            意见反馈
+                        </a>
+                    </div>
+                </div>
+                <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '192px'}}>
+                    <label
+                        style={{
+                            width: '64px',
+                            display: 'block',
+                            textAlign: 'center',
+                            float: 'left',
+                        }}
+                    >
+                        QQ
+                    </label>
+                    <label
+                        style={{
+                            width: '64px',
+                            display: 'block',
+                            textAlign: 'center',
+                            float: 'left',
+                        }}
+                    >
+                        微信
+                    </label>
+                    <label
+                        style={{
+                            width: '64px',
+                            display: 'block',
+                            textAlign: 'center',
+                            float: 'left',
+                        }}
+                    >
+                        微博
+                    </label>
                 </div>
             </div>
         );

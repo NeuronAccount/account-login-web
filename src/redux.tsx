@@ -139,7 +139,7 @@ export function apiAccountLogin(params: AccountLoginParams,
                                 onSuccess: (jwt: string) => void,
                                 onError: ((err: ApiError) => void)): (dispatch: (action: AnyAction) => void) => void {
     console.log('apiAccountLogin', params);
-    return function (dispatch: (action: AnyAction) => void ) {
+    return function (dispatch: (action: AnyAction) => void) {
         dispatch({type: ACCOUNT_LOGIN_REQUEST});
         return accountApi.login(params).then((data) => {
             dispatch({type: ACCOUNT_LOGIN_SUCCESS, payload: data});
