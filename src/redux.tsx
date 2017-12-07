@@ -54,10 +54,16 @@ function errorFromResponse(response: {}): Promise<ApiError> {
     }
 }
 
+export interface SmsCodeParams {
+    scene: string;
+    phone: string;
+    captchaId?: string;
+    captchaCode?: string;
+}
 export const SMS_CODE_REQUEST = 'SMS_CODE_REQUEST';
 export const SMS_CODE_SUCCESS = 'SMS_CODE_SUCCESS';
 export const SMS_CODE_FAILURE = 'SMS_CODE_FAILURE';
-export function apiSmsCode(params: {scene: string, phone: string, captchaId?: string, captchaCode?: string},
+export function apiSmsCode(params: SmsCodeParams,
                            onSuccess: () => void,
                            onError: (err: ApiError) => void): (dispatch: (action: AnyAction) => void) => void {
     console.log('apiSmsCode', params);
@@ -72,34 +78,6 @@ export function apiSmsCode(params: {scene: string, phone: string, captchaId?: st
                 onError(err);
             });
         });
-    };
-}
-
-export interface SmsSignupParams {
-    phone: string;
-    smsCode: string;
-    password: string;
-}
-export const SMS_SIGNUP_REQUEST = 'SMS_SIGNUP_REQUEST';
-export const SMS_SIGNUP_SUCCESS = 'SMS_SIGNUP_SUCCESS';
-export const SMS_SIGNUP_FAILURE = 'SMS_SIGNUP_FAILURE';
-export function apiSmsSignup(params: SmsSignupParams,
-                             onSuccess: (jwt: string) => void,
-                             onError: (err: ApiError) => void): (dispatch: (action: AnyAction) => void) => void {
-    console.log('apiSmsSignup', params);
-    return function (dispatch: (action: AnyAction) => void ) {
-        dispatch({type: SMS_SIGNUP_REQUEST});
-        return accountApi.smsSignup(params)
-            .then((data) => {
-                dispatch({type: SMS_SIGNUP_SUCCESS, payload: data});
-                onSuccess(data);
-            })
-            .catch((response) => {
-                errorFromResponse(response).then((err) => {
-                    dispatchResponseError(dispatch, SMS_SIGNUP_FAILURE, err);
-                    onError(err);
-                });
-            });
     };
 }
 
@@ -159,8 +137,6 @@ function loginResponse(jwt: string, action: AnyAction): string {
     }
 
     switch (action.type) {
-        case SMS_SIGNUP_SUCCESS:
-            return action.payload;
         case ACCOUNT_LOGIN_SUCCESS:
             return action.payload;
         case SMS_LOGIN_SUCCESS:

@@ -3,8 +3,7 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Button from 'material-ui/Button';
 import {
     AccountLoginParams,
-    apiAccountLogin, ApiError, apiSmsCode, apiSmsLogin, apiSmsSignup, RootState, SmsLoginParams,
-    SmsSignupParams
+    apiAccountLogin, ApiError, apiSmsCode, apiSmsLogin, RootState, SmsCodeParams, SmsLoginParams,
 } from '../redux';
 import { connect } from 'react-redux';
 import { TextField } from 'material-ui';
@@ -13,12 +12,9 @@ import { AnyAction } from 'redux';
 interface Props {
     jwt: string;
 
-    apiSmsCode: (params: { scene: string, phone: string, captchaId?: string, captchaCode?: string },
+    apiSmsCode: (params: SmsCodeParams,
                  onSuccess: () => void,
                  onError: (err: ApiError) => void) => (dispatch: (action: AnyAction) => void) => void;
-    apiSmsSignup: (params: SmsSignupParams,
-                   onSuccess: (jwt: string) => void,
-                   onError: (err: ApiError) => void) => (dispatch: (action: AnyAction) => void) => void;
     apiSmsLogin: (params: SmsLoginParams,
                   onSuccess: (jwt: string) => void,
                   onError: (err: ApiError) => void) => (dispatch: (action: AnyAction) => void) => void;
@@ -29,21 +25,18 @@ interface Props {
 
 interface State {
     queryParams: Map<string, string>;
+    queryFromOrigin: string;
     inputError: string;
     inputErrorTimer: number;
     inputErrorNotifyStartTime: Date;
-    isSignupView: boolean;
     loginTabIndex: number;
     loginName: string;
     loginPassword: string;
     loginPhone: string;
     loginSmsCode: string;
-    signupPhone: string;
-    signupSmsCode: string;
-    signupPassword: string;
 }
 
-class AuthorizePage extends React.Component<Props, State> {
+class LoginPage extends React.Component<Props, State> {
     componentWillMount() {
         let queryParamsMap = new Map<string, string>();
         if (window.location.search.startsWith('?')) {
@@ -57,18 +50,19 @@ class AuthorizePage extends React.Component<Props, State> {
             });
         }
 
+        console.log(window.location.search);
+
+        let queryFromOrigin = queryParamsMap.get('fromOrigin');
+
         this.setState({
             queryParams: queryParamsMap,
+            queryFromOrigin: queryFromOrigin == null ? '' : queryFromOrigin,
             inputError: '',
-            isSignupView: false,
             loginTabIndex: 0,
             loginName: '',
             loginPassword: '',
             loginPhone: '',
             loginSmsCode: '',
-            signupPhone: '',
-            signupSmsCode: '',
-            signupPassword: ''
         });
 
         this.onLoginSuccess = this.onLoginSuccess.bind(this);
@@ -79,12 +73,14 @@ class AuthorizePage extends React.Component<Props, State> {
         console.log('onLoginSuccess', jwt);
 
         try {
-            window.parent.postMessage(
-                {
-                    type: 'onLoginSuccess',
-                    payload: jwt
-                },
-                'http://localhost:3000');
+            if (this.state.queryFromOrigin != null && this.state.queryFromOrigin !== '') {
+                window.parent.postMessage(
+                    {
+                        type: 'onLoginSuccess',
+                        payload: jwt
+                    },
+                    this.state.queryFromOrigin);
+            }
         } catch (ex) {
             console.log(ex);
         }
@@ -105,131 +101,14 @@ class AuthorizePage extends React.Component<Props, State> {
             return;
         }
 
-        let t: number = setInterval(() => {
+        let t: number = window.setInterval(() => {
             if (new Date().getTime() - this.state.inputErrorNotifyStartTime.getTime() > 3000) {
                 this.setState({inputError: ''});
                 clearInterval(t);
             }
-        },                          200);
+        },                                 200);
 
         this.setState({inputErrorTimer: t});
-    }
-
-    enterSignup(signup: boolean) {
-        this.setState({isSignupView: signup});
-        this.onLoginInputError('');
-    }
-
-    renderSmsSignup() {
-        return (
-            <div>
-                <TextField
-                    margin="normal"
-                    fullWidth={true}
-                    label={'手机号'}
-                    value={this.state.signupPhone}
-                    onChange={(e) => {
-                        this.setState({signupPhone: e.target.value});
-                    }}
-                />
-                <TextField
-                    margin="normal"
-                    fullWidth={true}
-                    type={'password'}
-                    label={'密码'}
-                    value={this.state.signupPassword}
-                    onChange={(e) => {
-                        this.setState({signupPassword: e.target.value});
-                    }}
-                />
-                <div>
-                    <TextField
-                        margin="normal"
-                        style={{width: '100px', float: 'left'}}
-                        label={'验证码'}
-                        value={this.state.signupSmsCode}
-                        onChange={(e) => {
-                            this.setState({signupSmsCode: e.target.value});
-                        }}
-                    />
-                    <Button
-                        style={{float: 'right', marginTop: '30px', backgroundColor: '#86ce2f', color: '#FFF'}}
-                        onClick={() => {
-                            if (this.state.signupPhone == null || this.state.signupPhone === '') {
-                                return this.onLoginInputError('！请输入手机号');
-                            }
-
-                            this.props.apiSmsCode({scene: 'SMS_SIGNUP', phone: this.state.signupPhone},
-                                                  () => {
-                                    console.log('success');
-                                },
-                                                  (err) => {
-                                    this.onLoginInputError(err.message);
-                                });
-                        }}
-                    >
-                        发送短信验证码
-                    </Button>
-                </div>
-                <Button
-                    style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '20px'}}
-                    onClick={() => {
-                        if (this.state.signupPhone == null || this.state.signupPhone === '') {
-                            return this.onLoginInputError('！请输入手机号');
-                        }
-
-                        if (this.state.signupPassword == null || this.state.signupPassword === '') {
-                            return this.onLoginInputError('！请输入密码');
-                        }
-
-                        if (this.state.signupSmsCode == null || this.state.signupSmsCode === '') {
-                            return this.onLoginInputError('！请输入验证码');
-                        }
-
-                        this.props.apiSmsSignup({
-                                phone: this.state.signupPhone,
-                                smsCode: this.state.signupSmsCode,
-                                password: this.state.signupPassword
-                            },
-                                                this.onLoginSuccess,
-                                                this.onApiError);
-                    }}
-                >
-                    <label style={{fontSize: 'large'}}>注册并授权登录</label>
-                </Button>
-            </div>
-        );
-    }
-
-    renderSignup() {
-        return (
-            <div
-                style={{
-                    width: '300px',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    marginTop: '20px',
-                }}
-            >
-                <div style={{marginLeft: '20px', marginRight: '20px', marginBottom: '20px'}}>
-                    <div style={{marginTop: '5px', height: '10px'}}>
-                        <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
-                    </div>
-                    {this.renderSmsSignup()}
-                </div>
-                <div style={{marginTop: '30px', fontSize: 'small'}}>
-                    <div style={{float: 'right'}}>
-                        <label
-                            onClick={() => {
-                                this.enterSignup(false);
-                            }}
-                        >
-                            返回登录
-                        </label>
-                    </div>
-                </div>
-            </div>
-        );
     }
 
     renderAccountLogin() {
@@ -345,31 +224,33 @@ class AuthorizePage extends React.Component<Props, State> {
 
     render() {
         return (
-            <div
-                style={{
-                    width: '300px',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    marginTop: '20px',
-                }}
-            >
-                <Tabs
-                    value={this.state.loginTabIndex}
-                    fullWidth={true}
-                    onChange={(event: {}, v: number) => {
-                        this.setState({loginTabIndex: v});
-                        this.onLoginInputError('');
+            <div>
+                <div
+                    style={{
+                        width: '300px',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        marginTop: '20px',
                     }}
                 >
-                    <Tab label="帐号密码登录"/>
-                    <Tab label="短信验证码登录"/>
-                </Tabs>
-                <div style={{marginLeft: '20px', marginRight: '20px', marginBottom: '20px'}}>
-                    <div style={{marginTop: '5px', height: '10px'}}>
-                        <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
+                    <Tabs
+                        value={this.state.loginTabIndex}
+                        fullWidth={true}
+                        onChange={(event: {}, v: number) => {
+                            this.setState({loginTabIndex: v});
+                            this.onLoginInputError('');
+                        }}
+                    >
+                        <Tab label="帐号密码登录"/>
+                        <Tab label="短信验证码登录"/>
+                    </Tabs>
+                    <div style={{marginBottom: '20px'}}>
+                        <div style={{marginTop: '5px', height: '10px'}}>
+                            <label style={{fontSize: '50%', color: 'red'}}>{this.state.inputError}</label>
+                        </div>
+                        {this.state.loginTabIndex === 0 && this.renderAccountLogin()}
+                        {this.state.loginTabIndex === 1 && this.renderSmsLogin()}
                     </div>
-                    {this.state.loginTabIndex === 0 && this.renderAccountLogin()}
-                    {this.state.loginTabIndex === 1 && this.renderSmsLogin()}
                 </div>
                 <div style={{fontSize: 'small', height: '20px'}}>
                     <div style={{float: 'right'}}>
@@ -382,11 +263,19 @@ class AuthorizePage extends React.Component<Props, State> {
                         </a>
                         <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                         <a
-                            href="http://qq.com"
+                            href="http://localhost:3003/"
                             target="_blank"
                             style={{textDecoration: 'none'}}
                         >
                             注册新帐号
+                        </a>
+                        <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                        <a
+                            href="http://qq.com"
+                            target="_blank"
+                            style={{textDecoration: 'none'}}
+                        >
+                            安全中心
                         </a>
                         <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                         <a
@@ -443,7 +332,6 @@ function selectProps(state: RootState) {
 
 export default  connect(selectProps, {
     apiSmsCode,
-    apiSmsSignup,
     apiSmsLogin,
     apiAccountLogin,
-})(AuthorizePage);
+})(LoginPage);

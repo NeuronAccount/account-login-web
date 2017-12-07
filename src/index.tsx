@@ -8,7 +8,7 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import { rootReducer } from './redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import AuthorizePage from './authorizePage/AuthorizePage';
+import LoginPage from './loginPage/LoginPage';
 
 let store = createStore(rootReducer, {}, applyMiddleware(thunk, logger));
 
@@ -20,10 +20,7 @@ class Root extends React.Component {
             <Provider store={store}>
                 <MuiThemeProvider theme={theme}>
                     <BrowserRouter>
-                        <Route path="/" component={AuthorizePage}/>
-                    </BrowserRouter>
-                    <BrowserRouter>
-                        <Route path="/oauth2/authorize" component={AuthorizePage}/>
+                        <Route path="/" component={LoginPage}/>
                     </BrowserRouter>
                 </MuiThemeProvider>
             </Provider>
