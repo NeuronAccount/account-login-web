@@ -18,7 +18,7 @@ import * as assign from "core-js/library/fn/object/assign";
 interface Dictionary<T> { [index: string]: T; }
 export interface FetchAPI { (url: string, init?: any): Promise<any>; }
 
-const BASE_PATH = "http://localhost/private-api/v1/accounts".replace(/\/+$/, "");
+const BASE_PATH = "http://localhost/api-private/v1/accounts".replace(/\/+$/, "");
 
 export interface FetchArgs {
     url: string;

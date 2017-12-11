@@ -1,8 +1,8 @@
 import { AnyAction, combineReducers } from 'redux';
 import { isUndefined } from 'util';
-import { DefaultApiFactory } from './api/account/gen/api';
+import { DefaultApiFactory } from './api/account-private/gen/api';
 
-let accountApi = DefaultApiFactory(fetch, 'http://127.0.0.1:8083/private-api/v1/accounts' );
+let accountApi = DefaultApiFactory(fetch, 'http://127.0.0.1:8083/api-private/v1/accounts' );
 
 export interface RootState {
     jwt: string;
