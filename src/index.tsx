@@ -3,12 +3,11 @@ import * as ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import {  Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { BrowserRouter, Route } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import { rootReducer } from './redux';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import LoginPage from './loginPage/LoginPage';
+import App from './App';
 
 let store = createStore(rootReducer, {}, applyMiddleware(thunk, logger));
 
@@ -19,9 +18,7 @@ class Root extends React.Component {
         return (
             <Provider store={store}>
                 <MuiThemeProvider theme={theme}>
-                    <BrowserRouter>
-                        <Route path="/" component={LoginPage}/>
-                    </BrowserRouter>
+                    <App/>
                 </MuiThemeProvider>
             </Provider>
         );
