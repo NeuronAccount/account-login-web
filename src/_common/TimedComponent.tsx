@@ -15,40 +15,27 @@ interface State {
 
 export default class TimedComponent extends React.Component<Props, State> {
     public componentWillMount() {
-        this.setState({
-            timer: 0,
-            timestamp: this.props.timestamp,
-            visible: false
-        });
+        const {timestamp, visible, intervalMillSec} = this.props;
 
-        if (this.props.visible) {
-            this.show(this.props.timestamp, this.props.intervalMillSec);
+        this.reset();
+        if (visible) {
+            this.show(timestamp, intervalMillSec);
         }
     }
 
     public componentWillUnmount() {
-        if (this.state.timer !== 0) {
-            clearInterval(this.state.timer);
-        }
-
-        this.setState({
-            timer: 0,
-            timestamp: this.props.timestamp,
-            visible: false
-        });
+        this.clearTimer();
+        this.reset();
     }
 
-    public componentWillReceiveProps(nextProps: Props) {
-        // may called when props not changed
-        if (nextProps.timestamp === this.state.timestamp) {
+    public componentWillReceiveProps(nextProps: Props) { // may called when props not changed
+        const {timestamp, intervalMillSec} = nextProps;
+        if (timestamp === this.state.timestamp) {
             return;
         }
 
-        if (this.state.timer && this.state.timer !== 0) {
-            clearInterval(this.state.timer);
-        }
-
-        this.show(nextProps.timestamp, nextProps.intervalMillSec);
+        this.clearTimer();
+        this.show(timestamp, intervalMillSec);
     }
 
     public render() {
@@ -59,15 +46,32 @@ export default class TimedComponent extends React.Component<Props, State> {
         );
     }
 
+    private reset() {
+        this.setState({
+            timer: 0,
+            timestamp: this.props.timestamp,
+            visible: false
+        });
+    }
+
+    private clearTimer() {
+        const timer = this.state.timer;
+        if (timer !== 0) {
+            clearInterval(timer);
+        }
+    }
+
     private show(timestamp: Date, intervalMillSec: number) {
-        if (new Date().getTime() - timestamp.getTime() > intervalMillSec) {
+        const timestampMsec = timestamp.getTime();
+
+        if (new Date().getTime() - timestampMsec > intervalMillSec) {
             return;
         }
 
-        const t: number = window.setInterval(
+        const timer: number = window.setInterval(
             () => {
-                if (new Date().getTime() - timestamp.getTime() > intervalMillSec) {
-                    clearInterval(t);
+                if (new Date().getTime() - timestampMsec > intervalMillSec) {
+                    clearInterval(timer);
                     this.setState({
                         visible: false,
                         timer: 0
@@ -79,7 +83,7 @@ export default class TimedComponent extends React.Component<Props, State> {
         this.setState({
             visible: true,
             timestamp,
-            timer: t,
+            timer,
         });
     }
 }

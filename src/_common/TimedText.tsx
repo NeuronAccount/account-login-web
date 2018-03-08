@@ -1,61 +1,34 @@
 import * as React from 'react';
+import TimedComponent from './TimedComponent';
 
 export interface TextTimestamp {
     text: string;
-    timestamp: Date; // force props change
+    timestamp: Date;
 }
 
-export interface Props {
-    text: TextTimestamp;
+export interface Props extends TextTimestamp {
     intervalMillSec: number;
     style?: React.CSSProperties;
 }
 
-interface State {
-    text: TextTimestamp;
-    timer: number;
-}
-
-export default class TimedText extends React.Component<Props, State> {
-    public componentWillMount() {
-        this.setState({
-            text: {text: '', timestamp: new Date()},
-            timer: 0
-        });
-    }
-
-    public componentWillReceiveProps(nextProps: Props) {
-        // may called when props not changed
-        if (nextProps.text.timestamp === this.state.text.timestamp) {
-            return;
-        }
-
-        if (this.state.timer != null && this.state.timer !== 0) {
-            clearInterval(this.state.timer);
-        }
-
-        const t: number = window.setInterval(
-            () => {
-                if (new Date().getTime() - nextProps.text.timestamp.getTime() > nextProps.intervalMillSec) {
-                    this.setState({text: {text: '', timestamp: nextProps.text.timestamp}});
-                    clearInterval(t);
-                }
-            },
-            200);
-
-        this.setState({
-            text: nextProps.text,
-            timer: t,
-        });
-    }
-
+export default class TimedText extends React.Component<Props> {
     public render() {
+        const visible = this.props.text !== '';
+
         return (
-            <label
-                style={this.props.style}
-            >
-                {this.state.text.text}
-            </label>
+            <div>
+                <TimedComponent
+                    contentElement={this.renderText()}
+                    timestamp={this.props.timestamp}
+                    intervalMillSec={this.props.intervalMillSec}
+                    visible={visible}/>
+            </div>
+        );
+    }
+
+    private renderText(): JSX.Element {
+        return (
+            <label style={this.props.style}>{this.props.text}</label>
         );
     }
 }

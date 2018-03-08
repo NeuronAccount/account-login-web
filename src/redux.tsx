@@ -1,5 +1,4 @@
 import { AnyAction, combineReducers } from 'redux';
-import { isUndefined } from 'util';
 import { Dispatchable, StandardAction } from './_common/action';
 import { TextTimestamp } from './_common/TimedText';
 import {
@@ -60,7 +59,7 @@ function jwt(state: string = '', action: AnyAction): string {
 }
 
 const initErrorMessage = {text: '', timestamp: new Date()};
-function errorMessage(state: TextTimestamp= initErrorMessage, action: StandardAction): TextTimestamp {
+const errorMessage = (state: TextTimestamp= initErrorMessage, action: StandardAction): TextTimestamp => {
     switch (action.type) {
         case SMS_CODE_FAILURE:
         case LOGIN_FAILURE:
@@ -69,20 +68,18 @@ function errorMessage(state: TextTimestamp= initErrorMessage, action: StandardAc
         default:
             return state;
     }
-}
+};
 
-function smsCodeSentMessage(state: TextTimestamp, action: StandardAction): TextTimestamp {
-    if (isUndefined(state)) {
-        return {text: '', timestamp: new Date()};
-    }
-
+const initSmsCodeSentMessage = {text: '', timestamp: new Date()};
+const smsCodeSentMessage
+    = (state: TextTimestamp= initSmsCodeSentMessage, action: StandardAction): TextTimestamp => {
     switch (action.type) {
         case SMS_CODE_SUCCESS:
             return {text: '验证码已发送', timestamp: new Date()};
         default:
             return state;
     }
-}
+};
 
 export const rootReducer = combineReducers({
     jwt,

@@ -82,7 +82,8 @@ class LoginPage extends React.Component<Props, State> {
                 <div style={{marginBottom: '20px'}}>
                     <div style={{marginTop: '5px', height: '10px'}}>
                         <TimedText
-                            text={this.state.errorMessage}
+                            text={this.state.errorMessage.text}
+                            timestamp={this.state.errorMessage.timestamp}
                             intervalMillSec={3000}
                             style={{fontSize: '50%', color: 'red'}}
                         />
@@ -182,7 +183,8 @@ class LoginPage extends React.Component<Props, State> {
                         {
                             this.props.smsCodeSentMessage &&
                             <TimedText
-                                text={this.props.smsCodeSentMessage}
+                                text={this.props.smsCodeSentMessage.text}
+                                timestamp={this.props.smsCodeSentMessage.timestamp}
                                 intervalMillSec={3000}
                                 style={{fontSize: 'x-small', color: '#BBB', float: 'right'}}
                             />
