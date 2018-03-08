@@ -1,16 +1,19 @@
 import { AnyAction, combineReducers } from 'redux';
 import { isUndefined } from 'util';
-import {
-    DefaultApiFactory, login_FAILURE, login_SUCCESS, LoginParams, smsCode_FAILURE, smsCode_SUCCESS, SmsCodeParams,
-    smsLogin_FAILURE,
-    smsLogin_SUCCESS,
-    SmsLoginParams
-} from './api/account-private/gen/api';
 import { Dispatchable, StandardAction } from './_common/action';
-import { Dispatch } from 'react-redux';
 import { TextTimestamp } from './_common/TimedText';
+import {
+    DefaultApiFactory, loginParams , smsCodeParams, smsLoginParams
+} from './api/account-private/gen';
 
-let accountApi = DefaultApiFactory(fetch, 'http://127.0.0.1:8083/api-private/v1/accounts' );
+const LOGIN_FAILURE = 'LOGIN_FAILURE';
+const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+const SMS_CODE_FAILURE = 'SMS_CODE_FAILURE';
+const SMS_CODE_SUCCESS = 'SMS_CODE_SUCCESS';
+const SMS_LOGIN_FAILURE = 'SMS_LOGIN_FAILURE';
+const SMS_LOGIN_SUCCESS = 'SMS_LOGIN_SUCCESS';
+
+const accountApi = DefaultApiFactory(undefined, fetch, 'http://127.0.0.1:8083/api-private/v1/accounts');
 
 export interface RootState {
     jwt: string;
@@ -18,60 +21,50 @@ export interface RootState {
     smsCodeSentMessage: TextTimestamp;
 }
 
-export function apiSmsCode(params: SmsCodeParams): Dispatchable {
-    return function (dispatch: Dispatch<StandardAction>) {
-        return accountApi.smsCode(params).then(() => {
-            dispatch({type: smsCode_SUCCESS});
+export const apiSmsCode = (p: smsCodeParams): Dispatchable => (dispatch) => {
+    return accountApi.smsCode(p.scene, p.phone, p.captchaId, p.captchaCode)
+        .then(() => {
+            dispatch({type: SMS_CODE_SUCCESS});
         }).catch((err) => {
-            dispatch({type: smsCode_FAILURE, error: true, payload: err});
+            dispatch({type: SMS_CODE_FAILURE, error: true, payload: err});
         });
-    };
-}
+};
 
-export function apiSmsLogin(params: SmsLoginParams): Dispatchable {
-    return function (dispatch: Dispatch<StandardAction> ) {
-        return accountApi.smsLogin(params).then((data) => {
-            dispatch({type: smsLogin_SUCCESS, payload: data});
+export const apiSmsLogin = (p: smsLoginParams): Dispatchable => (dispatch) => {
+    return accountApi.smsLogin(p.phone, p.smsCode)
+        .then((data) => {
+            dispatch({type: SMS_LOGIN_SUCCESS, payload: data});
         }).catch((err) => {
-            dispatch({type: smsLogin_FAILURE, error: true, payload: err});
+            dispatch({type: SMS_LOGIN_FAILURE, error: true, payload: err});
         });
-    };
-}
+};
 
-export function apiLogin(params: LoginParams): Dispatchable {
-    return function (dispatch: Dispatch<StandardAction>) {
-        return accountApi.login(params).then((data) => {
-            dispatch({type: login_SUCCESS, payload: data});
+export const apiLogin = (p: loginParams): Dispatchable => (dispatch) => {
+    return accountApi.login(p.name, p.password)
+        .then((data) => {
+            dispatch({type: LOGIN_SUCCESS, payload: data});
         }).catch((err) => {
-            dispatch({type: login_FAILURE, error: true, payload: err});
+            dispatch({type: LOGIN_FAILURE, error: true, payload: err});
         });
-    };
-}
+};
 
-function jwt(state: string, action: AnyAction): string {
-    if (isUndefined(state)) {
-        return '';
-    }
-
+function jwt(state: string = '', action: AnyAction): string {
     switch (action.type) {
-        case login_SUCCESS:
+        case LOGIN_SUCCESS:
             return action.payload;
-        case smsLogin_SUCCESS:
+        case SMS_LOGIN_SUCCESS:
             return action.payload;
         default:
             return state;
     }
 }
 
-function errorMessage(state: TextTimestamp, action: StandardAction): TextTimestamp {
-    if (isUndefined(state)) {
-        return {text: '', timestamp: new Date()};
-    }
-
+const initErrorMessage = {text: '', timestamp: new Date()};
+function errorMessage(state: TextTimestamp= initErrorMessage, action: StandardAction): TextTimestamp {
     switch (action.type) {
-        case smsCode_FAILURE:
-        case login_FAILURE:
-        case smsLogin_FAILURE:
+        case SMS_CODE_FAILURE:
+        case LOGIN_FAILURE:
+        case SMS_LOGIN_FAILURE:
             return {text: action.payload.message, timestamp: new Date()};
         default:
             return state;
@@ -84,7 +77,7 @@ function smsCodeSentMessage(state: TextTimestamp, action: StandardAction): TextT
     }
 
     switch (action.type) {
-        case smsCode_SUCCESS:
+        case SMS_CODE_SUCCESS:
             return {text: '验证码已发送', timestamp: new Date()};
         default:
             return state;

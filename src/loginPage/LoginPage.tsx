@@ -1,23 +1,21 @@
+import { Button, Tab, Tabs , TextField } from 'material-ui';
 import * as React from 'react';
-import Tabs, { Tab } from 'material-ui/Tabs';
-import Button from 'material-ui/Button';
+import { connect } from 'react-redux';
+import { Dispatchable } from '../_common/action';
+import { parseQueryString } from '../_common/common';
+import { default as TimedText, TextTimestamp } from '../_common/TimedText';
+import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
 import { apiLogin, apiSmsCode, apiSmsLogin, RootState,
 } from '../redux';
-import { connect } from 'react-redux';
-import { TextField } from 'material-ui';
-import { LoginParams, SmsCodeParams, SmsLoginParams } from '../api/account-private/gen/api';
-import { Dispatchable } from '../_common/action';
-import { TextTimestamp, default as TimedText } from '../_common/TimedText';
-import { parseQueryString } from '../_common/common';
 
 interface Props {
     jwt: string;
     errorMessage: TextTimestamp;
     smsCodeSentMessage: TextTimestamp;
 
-    apiSmsCode: (params: SmsCodeParams) => Dispatchable;
-    apiSmsLogin: (params: SmsLoginParams) => Dispatchable;
-    apiLogin: (params: LoginParams) => Dispatchable;
+    apiSmsCode: (params: smsCodeParams) => Dispatchable;
+    apiSmsLogin: (params: smsLoginParams) => Dispatchable;
+    apiLogin: (params: loginParams) => Dispatchable;
 }
 
 interface State {
@@ -32,10 +30,10 @@ interface State {
 }
 
 class LoginPage extends React.Component<Props, State> {
-    componentWillMount() {
-        let queryParamsMap = parseQueryString(window.location.search);
+    public componentWillMount() {
+        const queryParamsMap = parseQueryString(window.location.search);
 
-        let queryFromOrigin = queryParamsMap.get('fromOrigin');
+        const queryFromOrigin = queryParamsMap.get('fromOrigin');
 
         this.setState({
             queryParams: queryParamsMap,
@@ -49,18 +47,18 @@ class LoginPage extends React.Component<Props, State> {
         });
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    public componentWillReceiveProps(nextProps: Props) {
         if (nextProps.errorMessage.text !== this.props.errorMessage.text
             || nextProps.errorMessage.timestamp !== this.props.errorMessage.timestamp) {
             this.setState({errorMessage: nextProps.errorMessage});
         }
     }
 
-    onError(message: string) {
+    public onError(message: string) {
         this.setState({errorMessage: {text: message, timestamp: new Date()}});
     }
 
-    renderLogin() {
+    public renderLogin() {
         return (
             <div
                 style={{
@@ -111,7 +109,7 @@ class LoginPage extends React.Component<Props, State> {
         );
     }
 
-    renderAccountLogin() {
+    public renderAccountLogin() {
         return (
             <div>
                 <TextField
@@ -158,7 +156,7 @@ class LoginPage extends React.Component<Props, State> {
         );
     }
 
-    renderSmsLogin() {
+    public renderSmsLogin() {
         return (
             <div>
                 <TextField
@@ -232,7 +230,7 @@ class LoginPage extends React.Component<Props, State> {
         );
     }
 
-    renderLinks() {
+    public renderLinks() {
         return (
             <div style={{fontSize: 'small', height: '20px'}}>
                 <div style={{float: 'right'}}>
@@ -272,7 +270,7 @@ class LoginPage extends React.Component<Props, State> {
         );
     }
 
-    renderOauthLogin() {
+    public renderOauthLogin() {
         return (
             <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '192px'}}>
                 <label
@@ -309,7 +307,7 @@ class LoginPage extends React.Component<Props, State> {
         );
     }
 
-    render() {
+    public render() {
         if (this.props.jwt !== '') {
             if (this.state.queryFromOrigin != null && this.state.queryFromOrigin !== '') {
                 window.parent.postMessage(

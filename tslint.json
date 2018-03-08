@@ -1,5 +1,5 @@
 {
-    "extends": ["tslint-react"],
+    "extends": ["tslint:latest"],
     "rules": {
         "align": [
             true,
@@ -29,7 +29,7 @@
             "static-before-instance",
             "variables-before-functions"
         ],
-        "no-any": true,
+        "no-any": false,
         "no-arg": true,
         "no-bitwise": true,
         "no-console": [
@@ -94,6 +94,10 @@
             "check-separator",
             "check-type",
             "check-typecast"
-        ]
+        ],
+        "object-literal-sort-keys":false,
+        "no-implicit-dependencies":false,
+        "no-reference": false,
+        "no-var-requires": false
     }
 }
