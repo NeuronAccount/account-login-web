@@ -1,24 +1,11 @@
-import { isUndefined } from 'util';
 import { AnyAction } from 'redux';
 
-export function  valueOrDefault(s: string|undefined): string {
-    return isUndefined(s) ? '' : s;
-}
-
-export function isNullOrEmpty(s: string|undefined|null): boolean {
-    if (isUndefined(s)) {
-        return true;
-    }
-
-    if (s == null || s === '') {
-        return true;
-    }
-
-    return false;
+export function sleep(nMS: number) {
+    return new Promise((resolve) => setTimeout(resolve, nMS));
 }
 
 export function parseQueryString(search: string): Map<string, string> {
-    let m = new Map<string, string>();
+    const m = new Map<string, string>();
     if (search.startsWith('?')) {
         search.substring(1).split('&').forEach((pair) => {
             const tokens = pair.split('=');
@@ -39,7 +26,7 @@ export interface ApiError {
 }
 
 const ON_ERROR_MESSAGE = 'ON_ERROR_MESSAGE';
-export function errorMessage( params: {message: string} ): AnyAction {
+export function errorMessage(params: {message: string}): AnyAction {
     return {
         type: ON_ERROR_MESSAGE,
         error: true,
@@ -50,7 +37,7 @@ export function errorMessage( params: {message: string} ): AnyAction {
 }
 
 export function dispatchResponseError(dispatch: (action: AnyAction) => void , actionType: string, payload: {}) {
-    dispatch({type: actionType, error: true, payload: payload});
+    dispatch({type: actionType, error: true, payload});
     dispatch(errorMessage({message: JSON.stringify(payload)}));
 }
 
@@ -63,16 +50,16 @@ export function errorFromResponse(response: {}): Promise<ApiError> {
         });
     } else if (response instanceof TypeError) {
         if (response.message === 'Failed to fetch') {
-            return new Promise(function (resolve: (err: ApiError) => void) {
+            return new Promise((resolve: (err: ApiError) => void) => {
                 resolve({status: 8193, code: 'NetworkException', message: '连接失败，请检查网络'});
             });
         } else {
-            return new Promise(function (resolve: (err: ApiError) => void) {
+            return new Promise((resolve: (err: ApiError) => void) => {
                 resolve({status: 8193, code: 'NetworkException', message: response.toString()});
             });
         }
     } else {
-        return new Promise(function (resolve: (err: ApiError) => void) {
+        return new Promise((resolve: (err: ApiError) => void) => {
             resolve({status: 8193, code: 'NetworkException', message: '未知错误 response:' + response});
         });
     }

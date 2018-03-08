@@ -6,6 +6,4 @@ export interface StandardAction {
     payload?: any;
 }
 
-export interface Dispatchable {
-    (dispatch: Dispatch<StandardAction>): void;
-}
+export type Dispatchable= (dispatch: Dispatch<StandardAction>) => void;
