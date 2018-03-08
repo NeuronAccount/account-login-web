@@ -243,7 +243,7 @@ class LoginPage extends React.Component<Props, State> {
                     </a>
                     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                     <a
-                        href="http://localhost:3003/"
+                        href="http://localhost:3002/"
                         target="_blank"
                         style={{textDecoration: 'none'}}
                     >
