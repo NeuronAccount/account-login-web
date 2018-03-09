@@ -68,12 +68,9 @@ class LoginPage extends React.Component<Props, State> {
 
     private static renderOauthLogin() {
         return (
-            <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '192px'}}>
+            <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '128px'}}>
                 <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
                     QQ
-                </label>
-                <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
-                    微信
                 </label>
                 <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
                     微博
