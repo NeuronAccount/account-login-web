@@ -1,7 +1,7 @@
 import { Button, Tab, Tabs , TextField } from 'material-ui';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Dispatchable } from '../_common/action';
+import { Dispatchable, StandardAction } from '../_common/action';
 import { parseQueryString } from '../_common/common';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
 import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
@@ -13,16 +13,16 @@ interface Props {
     errorMessage: TextTimestamp;
     smsCodeSentMessage: TextTimestamp;
 
-    apiSmsCode: (params: smsCodeParams) => Dispatchable;
-    apiSmsLogin: (params: smsLoginParams) => Dispatchable;
-    apiLogin: (params: loginParams) => Dispatchable;
+    apiSmsCode: (p: smsCodeParams) => Dispatchable;
+    apiSmsLogin: (p: smsLoginParams) => Dispatchable;
+    apiLogin: (p: loginParams) => Dispatchable;
 }
 
 interface State {
     queryParams: Map<string, string>;
-    queryFromOrigin: string;
+    fromOrigin?: string;
     errorMessage: TextTimestamp;
-    loginTabIndex: number;
+    tabIndex: number;
     loginName: string;
     loginPassword: string;
     loginPhone: string;
@@ -30,16 +30,75 @@ interface State {
 }
 
 class LoginPage extends React.Component<Props, State> {
-    public componentWillMount() {
-        const queryParamsMap = parseQueryString(window.location.search);
+    private static renderLinks() {
+        return (
+            <div style={{fontSize: 'small', height: '20px'}}>
+                <div style={{float: 'right'}}>
+                    <a
+                        href="http://qq.com"
+                        target="_blank"
+                        style={{textDecoration: 'none'}}>
+                        忘了密码？
+                    </a>
+                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                    <a
+                        href="http://localhost:3002/"
+                        target="_blank"
+                        style={{textDecoration: 'none'}}>
+                        注册新帐号
+                    </a>
+                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                    <a
+                        href="http://qq.com"
+                        target="_blank"
+                        style={{textDecoration: 'none'}}>
+                        安全中心
+                    </a>
+                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                    <a
+                        href="http://qq.com"
+                        target="_blank"
+                        style={{textDecoration: 'none'}}>
+                        意见反馈
+                    </a>
+                </div>
+            </div>
+        );
+    }
 
-        const queryFromOrigin = queryParamsMap.get('fromOrigin');
+    private static renderOauthLogin() {
+        return (
+            <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '192px'}}>
+                <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
+                    QQ
+                </label>
+                <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
+                    微信
+                </label>
+                <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
+                    微博
+                </label>
+            </div>
+        );
+    }
+
+    public componentWillMount() {
+        const queryParams = parseQueryString(window.location.search);
+        const fromOrigin = queryParams.get('fromOrigin');
+
+        this.onLoginNameChanged = this.onLoginNameChanged.bind(this);
+        this.onLoginPasswordChanged = this.onLoginPasswordChanged.bind(this);
+        this.onAccountLoginButtonClick = this.onAccountLoginButtonClick.bind(this);
+        this.onSmsLoginPhoneChanged = this.onSmsLoginPhoneChanged.bind(this);
+        this.onSmsLoginSmsCodeChanged = this.onSmsLoginSmsCodeChanged.bind(this);
+        this.onSendSmsCodeClick = this.onSendSmsCodeClick.bind(this);
+        this.onSmsLoginButtonClick = this.onSmsLoginButtonClick.bind(this);
 
         this.setState({
-            queryParams: queryParamsMap,
-            queryFromOrigin: queryFromOrigin == null ? '' : queryFromOrigin,
+            queryParams,
+            fromOrigin,
             errorMessage: {text: '', timestamp: new Date()},
-            loginTabIndex: 0,
+            tabIndex: 0,
             loginName: '',
             loginPassword: '',
             loginPhone: '',
@@ -48,299 +107,309 @@ class LoginPage extends React.Component<Props, State> {
     }
 
     public componentWillReceiveProps(nextProps: Props) {
-        if (nextProps.errorMessage.text !== this.props.errorMessage.text
-            || nextProps.errorMessage.timestamp !== this.props.errorMessage.timestamp) {
-            this.setState({errorMessage: nextProps.errorMessage});
+        const errorMessage = nextProps.errorMessage;
+        const {text, timestamp} = errorMessage;
+
+        if (text !== this.props.errorMessage.text
+            || timestamp !== this.props.errorMessage.timestamp) {
+            this.setState({errorMessage});
         }
     }
 
-    public onError(message: string) {
-        this.setState({errorMessage: {text: message, timestamp: new Date()}});
-    }
-
-    public renderLogin() {
-        return (
-            <div
-                style={{
-                    width: '300px',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    marginTop: '20px',
-                }}
-            >
-                <Tabs
-                    value={this.state.loginTabIndex}
-                    fullWidth={true}
-                    onChange={(event: {}, v: number) => {
-                        this.setState({loginTabIndex: v});
-                        this.onError('');
-                    }}
-                >
-                    <Tab label="帐号密码登录"/>
-                    <Tab label="短信验证码登录"/>
-                </Tabs>
-                <div style={{marginBottom: '20px'}}>
-                    <div style={{marginTop: '5px', height: '10px'}}>
-                        <TimedText
-                            text={this.state.errorMessage.text}
-                            timestamp={this.state.errorMessage.timestamp}
-                            intervalMillSec={3000}
-                            style={{fontSize: '50%', color: 'red'}}
-                        />
-                    </div>
-                    {this.state.loginTabIndex === 0 && this.renderAccountLogin()}
-                    {this.state.loginTabIndex === 1 && this.renderSmsLogin()}
-                    <div style={{marginTop: '5px', height: '10px'}}>
-                        {
-                            this.props.jwt !== '' &&
-
-                            <label
-                                style={{
-                                    float: 'right',
-                                    fontSize: 'x-small',
-                                    color: '#888',
-                                }}
-                            >
-                                登录成功
-                            </label>
-                        }
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    public renderAccountLogin() {
-        return (
-            <div>
-                <TextField
-                    margin="normal"
-                    fullWidth={true}
-                    label={'手机号'}
-                    value={this.state.loginName}
-                    onChange={(e) => {
-                        this.setState({loginName: e.target.value});
-                    }}
-                />
-                <TextField
-                    margin="normal"
-                    fullWidth={true}
-                    type={'password'}
-                    label={'密码'}
-                    value={this.state.loginPassword}
-                    onChange={(e) => {
-                        this.setState({loginPassword: e.target.value});
-                    }}
-                />
-                <Button
-                    style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '10px'}}
-                    onClick={() => {
-                        if (this.state.loginName == null || this.state.loginName === '') {
-                            return this.onError('！请输入手机号');
-                        }
-
-                        if (this.state.loginPassword == null || this.state.loginPassword === '') {
-                            return this.onError('！请输入密码');
-                        }
-
-                        this.props.apiLogin(
-                            {
-                                name: this.state.loginName,
-                                password: this.state.loginPassword
-                            }
-                        );
-                    }}
-                >
-                    <label style={{fontSize: 'large'}}>授权并登录</label>
-                </Button>
-            </div>
-        );
-    }
-
-    public renderSmsLogin() {
-        return (
-            <div>
-                <TextField
-                    margin="normal"
-                    fullWidth={true}
-                    label={'手机号'}
-                    value={this.state.loginPhone}
-                    onChange={(e) => {
-                        this.setState({loginPhone: e.target.value});
-                    }}
-                />
-                <div>
-                    <TextField
-                        margin="normal"
-                        style={{width: '100px', float: 'left'}}
-                        label={'验证码'}
-                        value={this.state.loginSmsCode}
-                        onChange={(e) => {
-                            this.setState({loginSmsCode: e.target.value});
-                        }}
-                    />
-                    <div style={{height: '20px'}}>
-                        {
-                            this.props.smsCodeSentMessage &&
-                            <TimedText
-                                text={this.props.smsCodeSentMessage.text}
-                                timestamp={this.props.smsCodeSentMessage.timestamp}
-                                intervalMillSec={3000}
-                                style={{fontSize: 'x-small', color: '#BBB', float: 'right'}}
-                            />
-                        }
-                    </div>
-                    <Button
-                        style={{float: 'right', marginTop: '8px', backgroundColor: '#86ce2f', color: '#FFF'}}
-                        onClick={() => {
-                            if (this.state.loginPhone == null || this.state.loginPhone === '') {
-                                return this.onError('！请输入手机号');
-                            }
-
-                            this.props.apiSmsCode(
-                                {
-                                    scene: 'SMS_LOGIN',
-                                    phone: this.state.loginPhone
-                                });
-                        }}
-                    >
-                        发送短信验证码
-                    </Button>
-                </div>
-                <Button
-                    style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '10px'}}
-                    onClick={() => {
-                        if (this.state.loginPhone == null || this.state.loginPhone === '') {
-                            return this.onError('！请输入手机号');
-                        }
-
-                        if (this.state.loginSmsCode == null || this.state.loginSmsCode === '') {
-                            return this.onError('！请输入验证码');
-                        }
-
-                        this.props.apiSmsLogin(
-                            {
-                                phone: this.state.loginPhone,
-                                smsCode: this.state.loginSmsCode
-                            }
-                        );
-                    }}
-                >
-                    <label style={{fontSize: 'large'}}>授权并登录</label>
-                </Button>
-            </div>
-        );
-    }
-
-    public renderLinks() {
-        return (
-            <div style={{fontSize: 'small', height: '20px'}}>
-                <div style={{float: 'right'}}>
-                    <a
-                        href="http://qq.com"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}
-                    >
-                        忘了密码？
-                    </a>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    <a
-                        href="http://localhost:3002/"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}
-                    >
-                        注册新帐号
-                    </a>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    <a
-                        href="http://qq.com"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}
-                    >
-                        安全中心
-                    </a>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    <a
-                        href="http://qq.com"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}
-                    >
-                        意见反馈
-                    </a>
-                </div>
-            </div>
-        );
-    }
-
-    public renderOauthLogin() {
-        return (
-            <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '192px'}}>
-                <label
-                    style={{
-                        width: '64px',
-                        display: 'block',
-                        textAlign: 'center',
-                        float: 'left',
-                    }}
-                >
-                    QQ
-                </label>
-                <label
-                    style={{
-                        width: '64px',
-                        display: 'block',
-                        textAlign: 'center',
-                        float: 'left',
-                    }}
-                >
-                    微信
-                </label>
-                <label
-                    style={{
-                        width: '64px',
-                        display: 'block',
-                        textAlign: 'center',
-                        float: 'left',
-                    }}
-                >
-                    微博
-                </label>
-            </div>
-        );
-    }
-
     public render() {
-        if (this.props.jwt !== '') {
-            if (this.state.queryFromOrigin != null && this.state.queryFromOrigin !== '') {
-                window.parent.postMessage(
-                    {
-                        type: 'onLoginSuccess',
-                        payload: this.props.jwt
-                    },
-                    decodeURIComponent(this.state.queryFromOrigin)
-                );
-            }
+        const {jwt} = this.props;
+        if (jwt !== '') {
+            this.postLoginSuccess(jwt);
         }
 
         return (
             <div>
                 {this.renderLogin()}
-                {this.renderLinks()}
-                {this.renderOauthLogin()}
+                {LoginPage.renderLinks()}
+                {LoginPage.renderOauthLogin()}
             </div>
         );
     }
+
+    private renderLogin() {
+        const {tabIndex} = this.state;
+
+        return (
+            <div style={{
+                width: '300px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                marginTop: '20px',
+                marginBottom: '20px'
+            }}>
+                {this.renderTabs()}
+                {this.renderErrorMessage()}
+                {tabIndex === 0 && this.renderAccountLogin()}
+                {tabIndex === 1 && this.renderSmsLogin()}
+                <div style={{marginTop: '5px', height: '10px'}}>
+                    {this.renderSuccessLabel()}
+                </div>
+            </div>
+        );
+    }
+
+    private renderTabs() {
+        return (
+            <Tabs
+                value={this.state.tabIndex}
+                fullWidth={true}
+                onChange={(event: {}, tabIndex: number) => {
+                    this.setState({tabIndex});
+                    this.onError('');
+                }}>
+                <Tab label="帐号密码登录"/>
+                <Tab label="短信验证码登录"/>
+            </Tabs>
+        );
+    }
+
+    private renderSuccessLabel() {
+        const succeeded = this.props.jwt !== '';
+        if (!succeeded) {
+            return null;
+        }
+
+        return (
+            <label style={{float: 'right', fontSize: 'x-small', color: '#888'}}>
+                登录成功
+            </label>
+        );
+    }
+
+    private renderErrorMessage() {
+        const {text, timestamp} = this.state.errorMessage;
+
+        return (
+            <div style={{marginTop: '5px', height: '10px'}}>
+                <TimedText
+                    text={text}
+                    timestamp={timestamp}
+                    intervalMillSec={3000}
+                    style={{fontSize: '50%', color: 'red'}}
+                />
+            </div>
+        );
+    }
+
+    private renderAccountLogin() {
+        return (
+            <div>
+                {this.renderAccountLoginName()}
+                {this.renderAccountLoginPassword()}
+                {this.renderAccountLoginButton()}
+            </div>
+        );
+    }
+
+    private renderAccountLoginName() {
+        return (
+            <TextField
+                margin="normal"
+                fullWidth={true}
+                label={'手机号'}
+                value={this.state.loginName}
+                onChange={this.onLoginNameChanged}
+            />
+        );
+    }
+
+    private onLoginNameChanged(e: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({loginName: e.target.value});
+    }
+
+    private renderAccountLoginPassword() {
+        return (
+            <TextField
+                margin="normal"
+                fullWidth={true}
+                type={'password'}
+                label={'密码'}
+                value={this.state.loginPassword}
+                onChange={this.onLoginPasswordChanged}
+            />
+        );
+    }
+
+    private onLoginPasswordChanged(e: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({loginPassword: e.target.value});
+    }
+
+    private renderAccountLoginButton() {
+        return (
+            <Button
+                style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '10px'}}
+                onClick={this.onAccountLoginButtonClick}
+            >
+                <label style={{fontSize: 'large'}}>授权并登录</label>
+            </Button>
+        );
+    }
+
+    private onAccountLoginButtonClick() {
+        const {loginName, loginPassword} = this.state;
+        if (loginName === '') {
+            return this.onError('！请输入手机号');
+        }
+        if (loginPassword === '') {
+            return this.onError('！请输入密码');
+        }
+
+        this.props.apiLogin({
+            name: loginName,
+            password: loginPassword
+        });
+    }
+
+    private renderSmsLogin() {
+        return (
+            <div>
+                {this.renderSmsLoginPhone()}
+                {this.renderSmsLoginSmsCodeContainer()}
+                {this.renderSmsLoginButton()}
+            </div>
+        );
+    }
+
+    private renderSmsLoginPhone() {
+        return (
+            <TextField
+                margin="normal"
+                fullWidth={true}
+                label={'手机号'}
+                value={this.state.loginPhone}
+                onChange={this.onSmsLoginPhoneChanged}
+            />
+        );
+    }
+
+    private onSmsLoginPhoneChanged(e: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({loginPhone: e.target.value});
+    }
+
+    private renderSmsLoginSmsCodeContainer() {
+        return (
+            <div>
+                {this.renderSmsLoginSmsCode()}
+                <div style={{height: '20px'}}>
+                    {this.renderSmsCodeSentMessage()}
+                </div>
+                {this.renderSendSmsCodeButton()}
+            </div>
+        );
+    }
+
+    private renderSmsLoginSmsCode() {
+        return (
+            <TextField
+                margin="normal"
+                style={{width: '100px', float: 'left'}}
+                label={'验证码'}
+                value={this.state.loginSmsCode}
+                onChange={this.onSmsLoginSmsCodeChanged}
+            />
+        );
+    }
+
+    private renderSmsCodeSentMessage() {
+        const smsCodeSentMessage = this.props.smsCodeSentMessage;
+        if (!smsCodeSentMessage) {
+            return null;
+        }
+
+        const {text, timestamp} = smsCodeSentMessage;
+
+        return (
+            <TimedText
+                text={text}
+                timestamp={timestamp}
+                intervalMillSec={3000}
+                style={{fontSize: 'x-small', color: '#BBB', float: 'right'}}
+            />
+        );
+    }
+
+    private onSmsLoginSmsCodeChanged(e: React.ChangeEvent<HTMLInputElement>) {
+        this.setState({loginSmsCode: e.target.value});
+    }
+
+    private renderSendSmsCodeButton() {
+        return (
+            <Button
+                style={{float: 'right', marginTop: '8px', backgroundColor: '#86ce2f', color: '#FFF'}}
+                onClick={this.onSendSmsCodeClick}
+            >
+                发送短信验证码
+            </Button>
+        );
+    }
+
+    private onSendSmsCodeClick() {
+        const {loginPhone} = this.state;
+        if (loginPhone === '') {
+            return this.onError('！请输入手机号');
+        }
+
+        this.props.apiSmsCode({
+            scene: 'SMS_LOGIN',
+            phone: loginPhone
+        });
+    }
+
+    private renderSmsLoginButton() {
+        return (
+            <Button
+                style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '10px'}}
+                onClick={this.onSmsLoginButtonClick}
+            >
+                <label style={{fontSize: 'large'}}>授权并登录</label>
+            </Button>
+        );
+    }
+
+    private onSmsLoginButtonClick() {
+        const {loginPhone, loginSmsCode} = this.state;
+        if (loginPhone === '') {
+            return this.onError('！请输入手机号');
+        }
+        if (loginSmsCode === '') {
+            return this.onError('！请输入验证码');
+        }
+
+        this.props.apiSmsLogin({
+                phone: loginPhone,
+                smsCode: loginSmsCode
+            }
+        );
+    }
+
+    private onError(message: string) {
+        this.setState({errorMessage: {text: message, timestamp: new Date()}});
+    }
+
+    private postLoginSuccess(jwt: string) {
+        const {fromOrigin} = this.state;
+        if (!fromOrigin || fromOrigin === '') {
+            return;
+        }
+
+        const loginSuccessAction: StandardAction = {type: 'onLoginCallback', payload: jwt};
+
+        window.parent.postMessage(loginSuccessAction, decodeURIComponent(fromOrigin));
+    }
 }
 
-function selectProps(state: RootState) {
-    return {
-        jwt: state.jwt,
-        errorMessage: state.errorMessage,
-        smsCodeSentMessage: state.smsCodeSentMessage,
-    };
-}
+const selectProps = (state: RootState) => ({
+    jwt: state.jwt,
+    errorMessage: state.errorMessage,
+    smsCodeSentMessage: state.smsCodeSentMessage,
+});
 
-export default  connect(selectProps, {
+export default connect(selectProps, {
     apiSmsCode,
     apiSmsLogin,
     apiLogin,

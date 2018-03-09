@@ -1,4 +1,4 @@
-import { AnyAction, combineReducers } from 'redux';
+import { combineReducers } from 'redux';
 import { Dispatchable, StandardAction } from './_common/action';
 import { TextTimestamp } from './_common/TimedText';
 import {
@@ -47,7 +47,7 @@ export const apiLogin = (p: loginParams): Dispatchable => (dispatch) => {
         });
 };
 
-function jwt(state: string = '', action: AnyAction): string {
+function jwt(state: string = '', action: StandardAction): string {
     switch (action.type) {
         case LOGIN_SUCCESS:
             return action.payload;
