@@ -4,12 +4,15 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
-import logger from 'redux-logger';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import App from './App';
 import { rootReducer } from './redux';
 
-const store = createStore(rootReducer, {}, applyMiddleware(thunk, logger));
+const logger = createLogger({collapsed: false});
+
+const store = createStore(rootReducer, {}, composeWithDevTools(applyMiddleware(thunk, logger)));
 
 const theme = createMuiTheme();
 
