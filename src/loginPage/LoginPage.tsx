@@ -35,7 +35,7 @@ class LoginPage extends React.Component<Props, State> {
             <div style={{fontSize: 'small', height: '20px'}}>
                 <div style={{float: 'right'}}>
                     <a
-                        href="http://qq.com"
+                        href="https://www.aliyun.com/"
                         target="_blank"
                         style={{textDecoration: 'none'}}>
                         忘了密码？
@@ -49,14 +49,14 @@ class LoginPage extends React.Component<Props, State> {
                     </a>
                     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                     <a
-                        href="http://qq.com"
+                        href="https://www.aliyun.com/"
                         target="_blank"
                         style={{textDecoration: 'none'}}>
                         安全中心
                     </a>
                     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                     <a
-                        href="http://qq.com"
+                        href="https://www.aliyun.com/"
                         target="_blank"
                         style={{textDecoration: 'none'}}>
                         意见反馈
@@ -67,16 +67,7 @@ class LoginPage extends React.Component<Props, State> {
     }
 
     private static renderOauthLogin() {
-        return (
-            <div style={{marginTop: '30px', marginLeft: 'auto', marginRight: 'auto', width: '128px'}}>
-                <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
-                    QQ
-                </label>
-                <label style={{width: '64px', display: 'block', textAlign: 'center', float: 'left'}}>
-                    微博
-                </label>
-            </div>
-        );
+        return null;
     }
 
     public componentWillMount() {
@@ -119,32 +110,26 @@ class LoginPage extends React.Component<Props, State> {
             this.postLoginSuccess(jwt);
         }
 
-        return (
-            <div>
-                {this.renderLogin()}
-                {LoginPage.renderLinks()}
-                {LoginPage.renderOauthLogin()}
-            </div>
-        );
-    }
-
-    private renderLogin() {
         const {tabIndex} = this.state;
 
         return (
             <div style={{
-                width: '300px',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                marginTop: '20px',
-                marginBottom: '20px'
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
             }}>
-                {this.renderTabs()}
-                {this.renderErrorMessage()}
-                {tabIndex === 0 && this.renderAccountLogin()}
-                {tabIndex === 1 && this.renderSmsLogin()}
-                <div style={{marginTop: '5px', height: '10px'}}>
-                    {this.renderSuccessLabel()}
+                <div style={{width: '300px'}}>
+                    {this.renderTabs()}
+                    <div style={{marginTop: '5px', height: '10px'}}>
+                        {this.renderErrorMessage()}
+                    </div>
+                    {tabIndex === 0 && this.renderAccountLogin()}
+                    {tabIndex === 1 && this.renderSmsLogin()}
+                    <div style={{marginTop: '5px', height: '24px'}}>
+                        {this.renderSuccessLabel()}
+                    </div>
+                    {LoginPage.renderLinks()}
+                    {LoginPage.renderOauthLogin()}
                 </div>
             </div>
         );
@@ -153,6 +138,7 @@ class LoginPage extends React.Component<Props, State> {
     private renderTabs() {
         return (
             <Tabs
+                indicatorColor={'#eee'}
                 value={this.state.tabIndex}
                 fullWidth={true}
                 onChange={(event: {}, tabIndex: number) => {
@@ -162,6 +148,19 @@ class LoginPage extends React.Component<Props, State> {
                 <Tab label="帐号密码登录"/>
                 <Tab label="短信验证码登录"/>
             </Tabs>
+        );
+    }
+
+    private renderErrorMessage() {
+        const {text, timestamp} = this.state.errorMessage;
+
+        return (
+            <TimedText
+                text={text}
+                timestamp={timestamp}
+                intervalMillSec={3000}
+                style={{fontSize: '50%', color: 'red'}}
+            />
         );
     }
 
@@ -175,21 +174,6 @@ class LoginPage extends React.Component<Props, State> {
             <label style={{float: 'right', fontSize: 'x-small', color: '#888'}}>
                 登录成功
             </label>
-        );
-    }
-
-    private renderErrorMessage() {
-        const {text, timestamp} = this.state.errorMessage;
-
-        return (
-            <div style={{marginTop: '5px', height: '10px'}}>
-                <TimedText
-                    text={text}
-                    timestamp={timestamp}
-                    intervalMillSec={3000}
-                    style={{fontSize: '50%', color: 'red'}}
-                />
-            </div>
         );
     }
 
@@ -239,7 +223,18 @@ class LoginPage extends React.Component<Props, State> {
     private renderAccountLoginButton() {
         return (
             <Button
-                style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '10px'}}
+                style={{
+                    backgroundColor: '#0088FF',
+                    fontSize: '150%',
+                    color: '#fff',
+                    width: '100%',
+                    marginTop: '10px',
+                    height: '48px',
+                    borderStyle: 'solid',
+                    borderWidth: '1px',
+                    borderRadius: '8px',
+                    borderColor: '#eee'
+                }}
                 onClick={this.onAccountLoginButtonClick}
             >
                 <label style={{fontSize: 'large'}}>授权并登录</label>
@@ -337,7 +332,16 @@ class LoginPage extends React.Component<Props, State> {
     private renderSendSmsCodeButton() {
         return (
             <Button
-                style={{float: 'right', marginTop: '8px', backgroundColor: '#86ce2f', color: '#FFF'}}
+                style={{
+                    backgroundColor: '#0088FF',
+                    float: 'right',
+                    marginTop: '8px',
+                    color: '#fff',
+                    borderStyle: 'solid',
+                    borderWidth: '1px',
+                    borderRadius: '8px',
+                    borderColor: '#eee'
+                }}
                 onClick={this.onSendSmsCodeClick}
             >
                 发送短信验证码
@@ -360,7 +364,18 @@ class LoginPage extends React.Component<Props, State> {
     private renderSmsLoginButton() {
         return (
             <Button
-                style={{backgroundColor: '#86ce2f', color: '#FFF', width: '100%', marginTop: '10px'}}
+                style={{
+                    backgroundColor: '#0088FF',
+                    fontSize: '150%',
+                    color: '#fff',
+                    width: '100%',
+                    marginTop: '10px',
+                    height: '48px',
+                    borderStyle: 'solid',
+                    borderWidth: '1px',
+                    borderRadius: '8px',
+                    borderColor: '#eee'
+                }}
                 onClick={this.onSmsLoginButtonClick}
             >
                 <label style={{fontSize: 'large'}}>授权并登录</label>
