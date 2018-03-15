@@ -1,6 +1,5 @@
 {
   "name": "neuron-web-template",
-  "homepage": "/web/login",
   "version": "v1.0.0",
   "private": true,
   "dependencies": {

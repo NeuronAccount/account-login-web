@@ -81,7 +81,7 @@ const smsCodeSentMessage
     }
 };
 
-export const rootReducer = combineReducers({
+export const rootReducer = combineReducers<RootState>({
     jwt,
     errorMessage,
     smsCodeSentMessage
