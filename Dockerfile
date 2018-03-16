@@ -10,7 +10,6 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 RUN mkdir -p /usr/local/nginx/logs/
 
 #拷贝web
-ARG WEB_PATH
-ADD ./build /usr/share/nginx/html/web/$WEB_PATH/
+ADD ./build /usr/share/nginx/html/
 
 ENTRYPOINT nginx -g "daemon off;"

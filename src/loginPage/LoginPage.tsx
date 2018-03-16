@@ -5,6 +5,7 @@ import { Dispatchable, StandardAction } from '../_common/action';
 import { parseQueryString } from '../_common/common';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
 import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
+import { HOST } from '../ENV';
 import { apiLogin, apiSmsCode, apiSmsLogin, RootState,
 } from '../redux';
 
@@ -42,7 +43,7 @@ class LoginPage extends React.Component<Props, State> {
                     </a>
                     <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                     <a
-                        href="http://localhost:3002/"
+                        href= {HOST + '/web/accounts/signup'}
                         target="_blank"
                         style={{textDecoration: 'none'}}>
                         注册新帐号
