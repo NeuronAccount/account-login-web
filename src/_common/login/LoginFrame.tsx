@@ -35,7 +35,7 @@ class LoginFrame extends React.Component<Props> {
 
     public render() {
         const style = this.props.style ? this.props.style : DefaultStyle;
-        const url = 'http://' + this.props.loginUrl +
+        const url = this.props.loginUrl +
             '?fromOrigin=' + encodeURIComponent(window.location.origin);
 
         return (

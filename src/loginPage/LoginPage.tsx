@@ -5,7 +5,7 @@ import { Dispatchable, StandardAction } from '../_common/action';
 import { parseQueryString } from '../_common/common';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
 import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
-import { HOST } from '../ENV';
+import { env } from '../env';
 import { apiLogin, apiSmsCode, apiSmsLogin, RootState,
 } from '../redux';
 
@@ -33,36 +33,34 @@ interface State {
 class LoginPage extends React.Component<Props, State> {
     private static renderLinks() {
         return (
-            <div style={{fontSize: 'small', height: '20px'}}>
-                <div style={{float: 'right'}}>
-                    <a
-                        href="https://www.aliyun.com/"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}>
-                        忘了密码？
-                    </a>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    <a
-                        href= {HOST + '/web/accounts/signup'}
-                        target="_blank"
-                        style={{textDecoration: 'none'}}>
-                        注册新帐号
-                    </a>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    <a
-                        href="https://www.aliyun.com/"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}>
-                        安全中心
-                    </a>
-                    <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                    <a
-                        href="https://www.aliyun.com/"
-                        target="_blank"
-                        style={{textDecoration: 'none'}}>
-                        意见反馈
-                    </a>
-                </div>
+            <div style={{fontSize: 'small', height: '20px', marginLeft: '8px'}}>
+                <a
+                    href="https://www.aliyun.com/"
+                    target="_blank"
+                    style={{textDecoration: 'none'}}>
+                    忘了密码？
+                </a>
+                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                <a
+                    href={env.host + '/web/accounts/signup'}
+                    target="_blank"
+                    style={{textDecoration: 'none'}}>
+                    注册新帐号
+                </a>
+                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                <a
+                    href="https://www.aliyun.com/"
+                    target="_blank"
+                    style={{textDecoration: 'none'}}>
+                    安全中心
+                </a>
+                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
+                <a
+                    href="https://www.aliyun.com/"
+                    target="_blank"
+                    style={{textDecoration: 'none'}}>
+                    意见反馈
+                </a>
             </div>
         );
     }
@@ -117,9 +115,10 @@ class LoginPage extends React.Component<Props, State> {
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center'
+                alignItems: 'center',
+                justifyContent: 'center',
             }}>
-                <div style={{width: '300px'}}>
+                <div style={{width: '300px', marginTop: '24px'}}>
                     {this.renderTabs()}
                     <div style={{marginTop: '5px', height: '10px'}}>
                         {this.renderErrorMessage()}
@@ -160,7 +159,7 @@ class LoginPage extends React.Component<Props, State> {
                 text={text}
                 timestamp={timestamp}
                 intervalMillSec={3000}
-                style={{fontSize: '50%', color: 'red'}}
+                style={{fontSize: '14px', color: 'red'}}
             />
         );
     }
@@ -321,7 +320,7 @@ class LoginPage extends React.Component<Props, State> {
                 text={text}
                 timestamp={timestamp}
                 intervalMillSec={3000}
-                style={{fontSize: 'x-small', color: '#BBB', float: 'right'}}
+                style={{fontSize: '14px', color: '#BBB', float: 'right'}}
             />
         );
     }

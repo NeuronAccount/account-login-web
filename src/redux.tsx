@@ -4,7 +4,7 @@ import { TextTimestamp } from './_common/TimedText';
 import {
     DefaultApiFactory, loginParams , smsCodeParams, smsLoginParams
 } from './api/account-private/gen';
-import { HOST } from './ENV';
+import { env } from './env';
 
 const LOGIN_FAILURE = 'LOGIN_FAILURE';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -13,7 +13,7 @@ const SMS_CODE_SUCCESS = 'SMS_CODE_SUCCESS';
 const SMS_LOGIN_FAILURE = 'SMS_LOGIN_FAILURE';
 const SMS_LOGIN_SUCCESS = 'SMS_LOGIN_SUCCESS';
 
-const accountApi = DefaultApiFactory(undefined, fetch, HOST + '/api-private/v1/accounts');
+const accountApi = DefaultApiFactory(undefined, fetch, env.host + '/api-private/v1/accounts');
 
 export interface RootState {
     jwt: string;
