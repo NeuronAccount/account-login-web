@@ -3,6 +3,7 @@
   "version": "v1.0.0",
   "private": true,
   "dependencies": {
+    "immutable": "^3.8.2",
     "material-ui": "^1.0.0-beta.36",
     "material-ui-icons": "^1.0.0-beta.36",
     "portable-fetch": "^3.0.0",

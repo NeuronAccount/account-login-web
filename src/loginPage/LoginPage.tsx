@@ -2,7 +2,7 @@ import { Button, Tab, Tabs , TextField } from 'material-ui';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatchable, StandardAction } from '../_common/action';
-import { parseQueryString } from '../_common/common';
+import { checkPhone, parseQueryString } from '../_common/common';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
 import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
 import { env } from '../env';
@@ -28,6 +28,8 @@ interface State {
     loginPassword: string;
     loginPhone: string;
     loginSmsCode: string;
+    smsCodeLastSendTime: Date;
+    smsCodeCountdown: number;
 }
 
 class LoginPage extends React.Component<Props, State> {
@@ -90,6 +92,8 @@ class LoginPage extends React.Component<Props, State> {
             loginPassword: '',
             loginPhone: '',
             loginSmsCode: '',
+            smsCodeLastSendTime: new Date(0),
+            smsCodeCountdown: 0
         });
     }
 
@@ -330,30 +334,53 @@ class LoginPage extends React.Component<Props, State> {
     }
 
     private renderSendSmsCodeButton() {
+        const {smsCodeCountdown} = this.state;
+        const disabled = smsCodeCountdown > 0;
+        const backgroundColor = disabled ? '#eee' : '#0088FF';
+        const color = disabled ? '#888' : '#fff';
+
         return (
             <Button
                 style={{
-                    backgroundColor: '#0088FF',
+                    backgroundColor,
                     float: 'right',
                     marginTop: '8px',
-                    color: '#fff',
+                    color,
                     borderStyle: 'solid',
                     borderWidth: '1px',
                     borderRadius: '8px',
                     borderColor: '#eee'
                 }}
                 onClick={this.onSendSmsCodeClick}
+                disabled={disabled}
             >
-                发送短信验证码
+                {disabled ? smsCodeCountdown + '秒后重新发送' : '发送短信验证码'}
             </Button>
         );
     }
 
     private onSendSmsCodeClick() {
+        const COUNT_DOWN = 60;
+
         const {loginPhone} = this.state;
         if (loginPhone === '') {
             return this.onError('！请输入手机号');
         }
+        if (!checkPhone(loginPhone)) {
+            return this.onError('！手机号格式不正确');
+        }
+
+        this.setState({smsCodeLastSendTime: new Date(), smsCodeCountdown: COUNT_DOWN});
+        const timer: number = window.setInterval(
+            () => {
+                const cd = Math.ceil(COUNT_DOWN -
+                    (new Date().getTime() - this.state.smsCodeLastSendTime.getTime()) / 1000);
+                this.setState({smsCodeCountdown: cd});
+                if (cd <= 0) {
+                    clearInterval(timer);
+                }
+            },
+            200);
 
         this.props.apiSmsCode({
             scene: 'SMS_LOGIN',

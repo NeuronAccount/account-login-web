@@ -4,6 +4,11 @@ export function sleep(nMS: number) {
     return new Promise((resolve) => setTimeout(resolve, nMS));
 }
 
+export const checkPhone = (phone: string): boolean => {
+    const reg = /^[1][0-9]{10}$/;
+    return reg.test(phone);
+};
+
 export function parseQueryString(search: string): Map<string, string> {
     const m = new Map<string, string>();
     if (search.startsWith('?')) {
