@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatchable, StandardAction } from '../_common/action';
 import { checkPhone, parseQueryString } from '../_common/common';
+import { countdown } from '../_common/countdown';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
 import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
 import { env } from '../env';
@@ -28,7 +29,6 @@ interface State {
     loginPassword: string;
     loginPhone: string;
     loginSmsCode: string;
-    smsCodeLastSendTime: Date;
     smsCodeCountdown: number;
 }
 
@@ -92,7 +92,6 @@ class LoginPage extends React.Component<Props, State> {
             loginPassword: '',
             loginPhone: '',
             loginSmsCode: '',
-            smsCodeLastSendTime: new Date(0),
             smsCodeCountdown: 0
         });
     }
@@ -360,7 +359,7 @@ class LoginPage extends React.Component<Props, State> {
     }
 
     private onSendSmsCodeClick() {
-        const COUNT_DOWN = 60;
+        const COUNT_DOWN_SECONDS = 60;
 
         const {loginPhone} = this.state;
         if (loginPhone === '') {
@@ -370,17 +369,9 @@ class LoginPage extends React.Component<Props, State> {
             return this.onError('！手机号格式不正确');
         }
 
-        this.setState({smsCodeLastSendTime: new Date(), smsCodeCountdown: COUNT_DOWN});
-        const timer: number = window.setInterval(
-            () => {
-                const cd = Math.ceil(COUNT_DOWN -
-                    (new Date().getTime() - this.state.smsCodeLastSendTime.getTime()) / 1000);
-                this.setState({smsCodeCountdown: cd});
-                if (cd <= 0) {
-                    clearInterval(timer);
-                }
-            },
-            200);
+        countdown(COUNT_DOWN_SECONDS, (n: number) => {
+            this.setState({smsCodeCountdown: n});
+        });
 
         this.props.apiSmsCode({
             scene: 'SMS_LOGIN',
