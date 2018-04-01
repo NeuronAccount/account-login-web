@@ -10,6 +10,11 @@ import { env } from '../env';
 import { apiLogin, apiSmsCode, apiSmsLogin, RootState,
 } from '../redux';
 
+export const MAX_LOGIN_NAME_LENGTH = 24;
+export const MAX_PHONE_LENGTH = 11;
+export const MAX_PASSWORD_LENGTH = 20;
+export const MAX_SMS_CODE_LENGTH = 6;
+
 interface Props {
     jwt: string;
     errorMessage: TextTimestamp;
@@ -35,32 +40,32 @@ interface State {
 class LoginPage extends React.Component<Props, State> {
     private static renderLinks() {
         return (
-            <div style={{fontSize: 'small', height: '20px', marginLeft: '8px'}}>
+            <div style={{fontSize: '13px', height: '20px', marginLeft: '8px'}}>
                 <a
                     href="https://www.aliyun.com/"
                     target="_blank"
-                    style={{textDecoration: 'none'}}>
+                    style={{textDecoration: 'none', color: '#008888'}}>
                     忘了密码？
                 </a>
                 <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                 <a
                     href={env.host + '/web/accounts/signup'}
                     target="_blank"
-                    style={{textDecoration: 'none'}}>
+                    style={{textDecoration: 'none', color: '#008888'}}>
                     注册新帐号
                 </a>
                 <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                 <a
                     href="https://www.aliyun.com/"
                     target="_blank"
-                    style={{textDecoration: 'none'}}>
+                    style={{textDecoration: 'none', color: '#008888'}}>
                     安全中心
                 </a>
                 <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
                 <a
                     href="https://www.aliyun.com/"
                     target="_blank"
-                    style={{textDecoration: 'none'}}>
+                    style={{textDecoration: 'none', color: '#008888'}}>
                     意见反馈
                 </a>
             </div>
@@ -148,8 +153,8 @@ class LoginPage extends React.Component<Props, State> {
                     this.setState({tabIndex});
                     this.onError('');
                 }}>
-                <Tab label="帐号密码登录"/>
-                <Tab label="短信验证码登录"/>
+                <Tab style={{color: '#008888'}} label="帐号密码登录"/>
+                <Tab style={{color: '#008888'}}  label="短信验证码登录"/>
             </Tabs>
         );
     }
@@ -227,7 +232,7 @@ class LoginPage extends React.Component<Props, State> {
         return (
             <Button
                 style={{
-                    backgroundColor: '#0088FF',
+                    backgroundColor: '#008888',
                     fontSize: '150%',
                     color: '#fff',
                     width: '100%',
@@ -240,7 +245,7 @@ class LoginPage extends React.Component<Props, State> {
                 }}
                 onClick={this.onAccountLoginButtonClick}
             >
-                <label style={{fontSize: 'large'}}>授权并登录</label>
+                <label style={{fontSize: '24px'}}>授权并登录</label>
             </Button>
         );
     }
@@ -335,7 +340,7 @@ class LoginPage extends React.Component<Props, State> {
     private renderSendSmsCodeButton() {
         const {smsCodeCountdown} = this.state;
         const disabled = smsCodeCountdown > 0;
-        const backgroundColor = disabled ? '#eee' : '#0088FF';
+        const backgroundColor = disabled ? '#eee' : '#008888';
         const color = disabled ? '#888' : '#fff';
 
         return (
@@ -383,7 +388,7 @@ class LoginPage extends React.Component<Props, State> {
         return (
             <Button
                 style={{
-                    backgroundColor: '#0088FF',
+                    backgroundColor: '#008888',
                     fontSize: '150%',
                     color: '#fff',
                     width: '100%',
