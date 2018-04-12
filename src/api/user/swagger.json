@@ -2,13 +2,13 @@
   "swagger": "2.0",
   "info": {
     "description": "",
-    "title": "Account Private API",
+    "title": "Account API",
     "contact": {
       "name": "mars"
     },
     "version": "v1"
   },
-  "basePath": "/api-private/v1/accounts",
+  "basePath": "/api/v1/users",
   "schemes": [
     "http",
     "https"
@@ -29,17 +29,11 @@
   "parameters": {
   },
   "paths": {
-    "/smsCode": {
+    "/sendLoginSmsCode": {
       "post": {
         "summary": "",
-        "operationId": "SmsCode",
+        "operationId": "SendLoginSmsCode",
         "parameters": [
-          {
-            "in": "query",
-            "name": "scene",
-            "type": "string",
-            "required": true
-          },
           {
             "in": "query",
             "name": "phone",
@@ -49,51 +43,19 @@
           {
             "in": "query",
             "name": "captchaId",
-            "type": "string"
+            "type": "string",
+            "required": true
           },
           {
             "in": "query",
             "name": "captchaCode",
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         ],
         "responses": {
           "200": {
             "description": "ok"
-          }
-        }
-      }
-    },
-    "/smsSignup": {
-      "post": {
-        "summary": "sms signup",
-        "operationId": "SmsSignup",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "phone",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "query",
-            "name": "smsCode",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "query",
-            "name": "password",
-            "type": "string",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "string"
-            }
           }
         }
       }
@@ -120,35 +82,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "/login": {
-      "post": {
-        "summary": "",
-        "operationId": "Login",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "name",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "query",
-            "name": "password",
-            "type": "string",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok",
-            "schema": {
-              "type": "string"
+              "$ref": "#/definitions/userToken"
             }
           }
         }
@@ -161,7 +95,13 @@
         "parameters": [
           {
             "in": "query",
-            "name": "jwt",
+            "name": "accessToken",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "refreshToken",
             "type": "string",
             "required": true
           }
@@ -173,38 +113,104 @@
         }
       }
     },
-    "/resetPassword": {
+    "/getOauthState": {
       "post": {
         "summary": "",
-        "operationId": "ResetPassword",
+        "operationId": "GetOauthState",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "state",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/oauthJump": {
+      "post": {
+        "summary": "",
+        "operationId": "OauthJump",
         "parameters": [
           {
             "in": "query",
-            "name": "phone",
+            "name": "redirectUri",
             "type": "string",
             "required": true
           },
           {
             "in": "query",
-            "name": "smsCode",
+            "name": "authorizationCode",
             "type": "string",
             "required": true
           },
           {
             "in": "query",
-            "name": "newPassword",
+            "name": "state",
             "type": "string",
             "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "ok"
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/userToken"
+            }
           }
         }
       }
+    },
+    "/refreshToken": {
+      "post": {
+        "summary": "",
+        "operationId": "RefreshToken",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "refreshToken",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/userToken"
+            }
+          }
+        }
+      }
+    },
+    "/bindPhone": {
+    },
+    "/unbindPhone": {
+    },
+    "/bindOauthAccount":{
+
+    },
+    "/unbindOauthAccount":{
+
     }
   },
   "definitions": {
+    "userToken": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "accessToken",
+        "refreshToken"
+      ]
+    }
   }
 }

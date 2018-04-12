@@ -2,68 +2,55 @@ import { combineReducers } from 'redux';
 import { Dispatchable, StandardAction } from './_common/action';
 import { TextTimestamp } from './_common/TimedText';
 import {
-    DefaultApiFactory, loginParams , smsCodeParams, smsLoginParams
-} from './api/account-private/gen';
+    DefaultApiFactory, sendLoginSmsCodeParams, smsLoginParams, UserToken
+} from './api/user/gen';
 import { env } from './env';
 
-const LOGIN_FAILURE = 'LOGIN_FAILURE';
-const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-const SMS_CODE_FAILURE = 'SMS_CODE_FAILURE';
-const SMS_CODE_SUCCESS = 'SMS_CODE_SUCCESS';
+const SEND_LOGIN_SMS_CODE_FAILURE = 'SEND_LOGIN_SMS_CODE_FAILURE';
+const SEND_LOGIN_SMS_CODE_SUCCESS = 'SEND_LOGIN_SMS_CODE_SUCCESS';
 const SMS_LOGIN_FAILURE = 'SMS_LOGIN_FAILURE';
 const SMS_LOGIN_SUCCESS = 'SMS_LOGIN_SUCCESS';
 
-const accountApi = DefaultApiFactory(undefined, fetch, env.host + '/api-private/v1/accounts');
+const accountApi = DefaultApiFactory(undefined, fetch, env.host + '/api/v1/users');
 
 export interface RootState {
-    jwt: string;
+    userToken: UserToken;
     errorMessage: TextTimestamp;
     smsCodeSentMessage: TextTimestamp;
 }
 
-export const apiSmsCode = (p: smsCodeParams): Dispatchable => (dispatch) => {
-    return accountApi.smsCode(p.scene, p.phone, p.captchaId, p.captchaCode)
+export const apiSendLoginsSmsCode = (p: sendLoginSmsCodeParams): Dispatchable => (dispatch) => {
+    return accountApi.sendLoginSmsCode(p.phone, p.captchaId, p.captchaCode)
         .then(() => {
-            dispatch({type: SMS_CODE_SUCCESS});
+            dispatch({type: SEND_LOGIN_SMS_CODE_SUCCESS});
         }).catch((err) => {
-            dispatch({type: SMS_CODE_FAILURE, error: true, payload: err});
+            dispatch({type: SEND_LOGIN_SMS_CODE_FAILURE, error: true, payload: err});
         });
 };
 
 export const apiSmsLogin = (p: smsLoginParams): Dispatchable => (dispatch) => {
     return accountApi.smsLogin(p.phone, p.smsCode)
-        .then((data) => {
-            dispatch({type: SMS_LOGIN_SUCCESS, payload: data});
+        .then((userToken: UserToken) => {
+            dispatch({type: SMS_LOGIN_SUCCESS, payload: userToken});
         }).catch((err) => {
             dispatch({type: SMS_LOGIN_FAILURE, error: true, payload: err});
         });
 };
 
-export const apiLogin = (p: loginParams): Dispatchable => (dispatch) => {
-    return accountApi.login(p.name, p.password)
-        .then((data) => {
-            dispatch({type: LOGIN_SUCCESS, payload: data});
-        }).catch((err) => {
-            dispatch({type: LOGIN_FAILURE, error: true, payload: err});
-        });
-};
-
-function jwt(state: string = '', action: StandardAction): string {
+const initUserToken: UserToken = {accessToken: '', refreshToken: ''};
+const userTokenReducer = (state: UserToken = initUserToken, action: StandardAction): UserToken => {
     switch (action.type) {
-        case LOGIN_SUCCESS:
-            return action.payload;
         case SMS_LOGIN_SUCCESS:
             return action.payload;
         default:
             return state;
     }
-}
+};
 
 const initErrorMessage = {text: '', timestamp: new Date()};
-const errorMessage = (state: TextTimestamp= initErrorMessage, action: StandardAction): TextTimestamp => {
+const errorMessageReducer = (state: TextTimestamp= initErrorMessage, action: StandardAction): TextTimestamp => {
     switch (action.type) {
-        case SMS_CODE_FAILURE:
-        case LOGIN_FAILURE:
+        case SEND_LOGIN_SMS_CODE_FAILURE:
         case SMS_LOGIN_FAILURE:
             return {text: action.payload.message, timestamp: new Date()};
         default:
@@ -72,10 +59,10 @@ const errorMessage = (state: TextTimestamp= initErrorMessage, action: StandardAc
 };
 
 const initSmsCodeSentMessage = {text: '', timestamp: new Date()};
-const smsCodeSentMessage
+const smsCodeSentMessageReducer
     = (state: TextTimestamp= initSmsCodeSentMessage, action: StandardAction): TextTimestamp => {
     switch (action.type) {
-        case SMS_CODE_SUCCESS:
+        case SEND_LOGIN_SMS_CODE_SUCCESS:
             return {text: '验证码已发送', timestamp: new Date()};
         default:
             return state;
@@ -83,7 +70,7 @@ const smsCodeSentMessage
 };
 
 export const rootReducer = combineReducers<RootState>({
-    jwt,
-    errorMessage,
-    smsCodeSentMessage
+    userToken: userTokenReducer,
+    errorMessage: errorMessageReducer,
+    smsCodeSentMessage: smsCodeSentMessageReducer
 });

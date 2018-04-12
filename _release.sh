@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-NAME=neuron-account-login-web \
+NAME=neuron-user-login-web \
 VERSION=v1.0.0 \
 PORT=3001 \
-REACT_APP_WEB_PATH=/web/accounts/login \
+REACT_APP_WEB_PATH=/web/user/login \
 neuron-react-release.sh

@@ -1,13 +1,13 @@
-import { Button, Tab, Tabs , TextField } from 'material-ui';
+import { Button, TextField } from 'material-ui';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatchable, StandardAction } from '../_common/action';
 import { checkPhone, parseQueryString } from '../_common/common';
 import { countdown } from '../_common/countdown';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
-import { loginParams, smsCodeParams, smsLoginParams } from '../api/account-private/gen';
-import { env } from '../env';
-import { apiLogin, apiSmsCode, apiSmsLogin, RootState,
+import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from '../api/user/gen';
+import {
+    apiSendLoginsSmsCode, apiSmsLogin, RootState,
 } from '../redux';
 
 export const MAX_LOGIN_NAME_LENGTH = 24;
@@ -16,62 +16,24 @@ export const MAX_PASSWORD_LENGTH = 20;
 export const MAX_SMS_CODE_LENGTH = 6;
 
 interface Props {
-    jwt: string;
+    userToken: UserToken;
     errorMessage: TextTimestamp;
     smsCodeSentMessage: TextTimestamp;
 
-    apiSmsCode: (p: smsCodeParams) => Dispatchable;
+    apiSendLoginsSmsCode: (p: sendLoginSmsCodeParams) => Dispatchable;
     apiSmsLogin: (p: smsLoginParams) => Dispatchable;
-    apiLogin: (p: loginParams) => Dispatchable;
 }
 
 interface State {
     queryParams: Map<string, string>;
     fromOrigin?: string;
     errorMessage: TextTimestamp;
-    tabIndex: number;
-    loginName: string;
-    loginPassword: string;
     loginPhone: string;
     loginSmsCode: string;
     smsCodeCountdown: number;
 }
 
 class LoginPage extends React.Component<Props, State> {
-    private static renderLinks() {
-        return (
-            <div style={{fontSize: '13px', height: '20px', marginLeft: '8px'}}>
-                <a
-                    href="https://www.aliyun.com/"
-                    target="_blank"
-                    style={{textDecoration: 'none', color: '#008888'}}>
-                    忘了密码？
-                </a>
-                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                <a
-                    href={env.host + '/web/accounts/signup'}
-                    target="_blank"
-                    style={{textDecoration: 'none', color: '#008888'}}>
-                    注册新帐号
-                </a>
-                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                <a
-                    href="https://www.aliyun.com/"
-                    target="_blank"
-                    style={{textDecoration: 'none', color: '#008888'}}>
-                    安全中心
-                </a>
-                <label>&nbsp;&nbsp;|&nbsp;&nbsp;</label>
-                <a
-                    href="https://www.aliyun.com/"
-                    target="_blank"
-                    style={{textDecoration: 'none', color: '#008888'}}>
-                    意见反馈
-                </a>
-            </div>
-        );
-    }
-
     private static renderOauthLogin() {
         return null;
     }
@@ -80,21 +42,15 @@ class LoginPage extends React.Component<Props, State> {
         const queryParams = parseQueryString(window.location.search);
         const fromOrigin = queryParams.get('fromOrigin');
 
-        this.onLoginNameChanged = this.onLoginNameChanged.bind(this);
-        this.onLoginPasswordChanged = this.onLoginPasswordChanged.bind(this);
-        this.onAccountLoginButtonClick = this.onAccountLoginButtonClick.bind(this);
         this.onSmsLoginPhoneChanged = this.onSmsLoginPhoneChanged.bind(this);
         this.onSmsLoginSmsCodeChanged = this.onSmsLoginSmsCodeChanged.bind(this);
-        this.onSendSmsCodeClick = this.onSendSmsCodeClick.bind(this);
+        this.onSendLoginSmsCodeClick = this.onSendLoginSmsCodeClick.bind(this);
         this.onSmsLoginButtonClick = this.onSmsLoginButtonClick.bind(this);
 
         this.setState({
             queryParams,
             fromOrigin,
             errorMessage: {text: '', timestamp: new Date()},
-            tabIndex: 0,
-            loginName: '',
-            loginPassword: '',
             loginPhone: '',
             loginSmsCode: '',
             smsCodeCountdown: 0
@@ -112,12 +68,10 @@ class LoginPage extends React.Component<Props, State> {
     }
 
     public render() {
-        const {jwt} = this.props;
-        if (jwt !== '') {
-            this.postLoginSuccess(jwt);
+        const {userToken} = this.props;
+        if (userToken.accessToken !== '') {
+            this.postLoginSuccess(userToken);
         }
-
-        const {tabIndex} = this.state;
 
         return (
             <div style={{
@@ -127,35 +81,16 @@ class LoginPage extends React.Component<Props, State> {
                 justifyContent: 'center',
             }}>
                 <div style={{width: '300px', marginTop: '24px'}}>
-                    {this.renderTabs()}
                     <div style={{marginTop: '5px', height: '10px'}}>
                         {this.renderErrorMessage()}
                     </div>
-                    {tabIndex === 0 && this.renderAccountLogin()}
-                    {tabIndex === 1 && this.renderSmsLogin()}
+                    {this.renderSmsLogin()}
                     <div style={{marginTop: '5px', height: '24px'}}>
                         {this.renderSuccessLabel()}
                     </div>
-                    {LoginPage.renderLinks()}
                     {LoginPage.renderOauthLogin()}
                 </div>
             </div>
-        );
-    }
-
-    private renderTabs() {
-        return (
-            <Tabs
-                indicatorColor={'#eee'}
-                value={this.state.tabIndex}
-                fullWidth={true}
-                onChange={(event: {}, tabIndex: number) => {
-                    this.setState({tabIndex});
-                    this.onError('');
-                }}>
-                <Tab style={{color: '#008888'}} label="帐号密码登录"/>
-                <Tab style={{color: '#008888'}}  label="短信验证码登录"/>
-            </Tabs>
         );
     }
 
@@ -173,7 +108,8 @@ class LoginPage extends React.Component<Props, State> {
     }
 
     private renderSuccessLabel() {
-        const succeeded = this.props.jwt !== '';
+        const {userToken} = this.props;
+        const succeeded = userToken && userToken.accessToken !== '';
         if (!succeeded) {
             return null;
         }
@@ -183,86 +119,6 @@ class LoginPage extends React.Component<Props, State> {
                 登录成功
             </label>
         );
-    }
-
-    private renderAccountLogin() {
-        return (
-            <div>
-                {this.renderAccountLoginName()}
-                {this.renderAccountLoginPassword()}
-                {this.renderAccountLoginButton()}
-            </div>
-        );
-    }
-
-    private renderAccountLoginName() {
-        return (
-            <TextField
-                margin="normal"
-                fullWidth={true}
-                label={'手机号'}
-                value={this.state.loginName}
-                onChange={this.onLoginNameChanged}
-            />
-        );
-    }
-
-    private onLoginNameChanged(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({loginName: e.target.value});
-    }
-
-    private renderAccountLoginPassword() {
-        return (
-            <TextField
-                margin="normal"
-                fullWidth={true}
-                type={'password'}
-                label={'密码'}
-                value={this.state.loginPassword}
-                onChange={this.onLoginPasswordChanged}
-            />
-        );
-    }
-
-    private onLoginPasswordChanged(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({loginPassword: e.target.value});
-    }
-
-    private renderAccountLoginButton() {
-        return (
-            <Button
-                style={{
-                    backgroundColor: '#008888',
-                    fontSize: '150%',
-                    color: '#fff',
-                    width: '100%',
-                    marginTop: '10px',
-                    height: '48px',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    borderRadius: '8px',
-                    borderColor: '#eee'
-                }}
-                onClick={this.onAccountLoginButtonClick}
-            >
-                <label style={{fontSize: '24px'}}>授权并登录</label>
-            </Button>
-        );
-    }
-
-    private onAccountLoginButtonClick() {
-        const {loginName, loginPassword} = this.state;
-        if (loginName === '') {
-            return this.onError('！请输入手机号');
-        }
-        if (loginPassword === '') {
-            return this.onError('！请输入密码');
-        }
-
-        this.props.apiLogin({
-            name: loginName,
-            password: loginPassword
-        });
     }
 
     private renderSmsLogin() {
@@ -355,33 +211,12 @@ class LoginPage extends React.Component<Props, State> {
                     borderRadius: '8px',
                     borderColor: '#eee'
                 }}
-                onClick={this.onSendSmsCodeClick}
+                onClick={this.onSendLoginSmsCodeClick}
                 disabled={disabled}
             >
                 {disabled ? smsCodeCountdown + '秒后重新发送' : '发送短信验证码'}
             </Button>
         );
-    }
-
-    private onSendSmsCodeClick() {
-        const COUNT_DOWN_SECONDS = 60;
-
-        const {loginPhone} = this.state;
-        if (loginPhone === '') {
-            return this.onError('！请输入手机号');
-        }
-        if (!checkPhone(loginPhone)) {
-            return this.onError('！手机号格式不正确');
-        }
-
-        countdown(COUNT_DOWN_SECONDS, (n: number) => {
-            this.setState({smsCodeCountdown: n});
-        });
-
-        this.props.apiSmsCode({
-            scene: 'SMS_LOGIN',
-            phone: loginPhone
-        });
     }
 
     private renderSmsLoginButton() {
@@ -406,6 +241,28 @@ class LoginPage extends React.Component<Props, State> {
         );
     }
 
+    private onSendLoginSmsCodeClick() {
+        const COUNT_DOWN_SECONDS = 60;
+
+        const {loginPhone} = this.state;
+        if (loginPhone === '') {
+            return this.onError('！请输入手机号');
+        }
+        if (!checkPhone(loginPhone)) {
+            return this.onError('！手机号格式不正确');
+        }
+
+        countdown(COUNT_DOWN_SECONDS, (n: number) => {
+            this.setState({smsCodeCountdown: n});
+        });
+
+        this.props.apiSendLoginsSmsCode({
+            phone: loginPhone,
+            captchaId: '1',
+            captchaCode: '1'
+        });
+    }
+
     private onSmsLoginButtonClick() {
         const {loginPhone, loginSmsCode} = this.state;
         if (loginPhone === '') {
@@ -426,26 +283,25 @@ class LoginPage extends React.Component<Props, State> {
         this.setState({errorMessage: {text: message, timestamp: new Date()}});
     }
 
-    private postLoginSuccess(jwt: string) {
+    private postLoginSuccess(userToken: UserToken) {
         const {fromOrigin} = this.state;
         if (!fromOrigin || fromOrigin === '') {
             return;
         }
 
-        const loginSuccessAction: StandardAction = {type: 'onLoginCallback', payload: jwt};
+        const loginSuccessAction: StandardAction = {type: 'onLoginCallback', payload: userToken};
 
         window.parent.postMessage(loginSuccessAction, decodeURIComponent(fromOrigin));
     }
 }
 
-const selectProps = (state: RootState) => ({
-    jwt: state.jwt,
-    errorMessage: state.errorMessage,
-    smsCodeSentMessage: state.smsCodeSentMessage,
+const selectProps = (rootState: RootState) => ({
+    userToken: rootState.userToken,
+    errorMessage: rootState.errorMessage,
+    smsCodeSentMessage: rootState.smsCodeSentMessage,
 });
 
 export default connect(selectProps, {
-    apiSmsCode,
+    apiSendLoginsSmsCode,
     apiSmsLogin,
-    apiLogin,
 })(LoginPage);
