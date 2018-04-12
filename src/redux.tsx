@@ -3,7 +3,7 @@ import { Dispatchable, StandardAction } from './_common/action';
 import { TextTimestamp } from './_common/TimedText';
 import {
     DefaultApiFactory, sendLoginSmsCodeParams, smsLoginParams, UserToken
-} from './api/user/gen';
+} from './api/account/gen';
 import { env } from './env';
 
 const SEND_LOGIN_SMS_CODE_FAILURE = 'SEND_LOGIN_SMS_CODE_FAILURE';

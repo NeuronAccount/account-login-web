@@ -17,7 +17,7 @@ import * as url from "url";
 import * as portableFetch from "portable-fetch";
 import { Configuration } from "./configuration";
 
-const BASE_PATH = "http://localhost/api/v1/users".replace(/\/+$/, "");
+const BASE_PATH = "http://localhost/api/v1/accounts".replace(/\/+$/, "");
 
 /**
  *
@@ -82,6 +82,32 @@ export class RequiredError extends Error {
 /**
  * 
  * @export
+ * @interface UserInfo
+ */
+export interface UserInfo {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserInfo
+     */
+    userId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserInfo
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserInfo
+     */
+    icon?: string;
+}
+
+/**
+ * 
+ * @export
  * @interface UserToken
  */
 export interface UserToken {
@@ -118,6 +144,37 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+
+            return {
+                url: url.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo(options: any = {}): FetchArgs {
+            const localVarPath = `/userInfo`;
+            const localVarUrlObj = url.parse(localVarPath, true);
+            const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            if (configuration && configuration.apiKey) {
+                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+					? configuration.apiKey("Authorization")
+					: configuration.apiKey;
+                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+            }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
             // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
@@ -373,6 +430,24 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserInfo> {
+            const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).getUserInfo(options);
+            return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
+                return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                    if (response.status >= 200 && response.status < 300) {
+                        return response.json();
+                    } else {
+                        return response.json().then((data: {}) => {throw data; });
+                    }
+                });
+            };
+        },
+        /**
+         * 
+         * @summary 
          * @param {string} accessToken 
          * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
@@ -492,6 +567,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, fetch?
         /**
          * 
          * @summary 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUserInfo(options?: any) {
+            return DefaultApiFp(configuration).getUserInfo(options)(fetch, basePath);
+        },
+        /**
+         * 
+         * @summary 
          * @param {string} accessToken 
          * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
@@ -564,6 +648,17 @@ export class DefaultApi extends BaseAPI {
      */
     public getOauthState(options?: any) {
         return DefaultApiFp(this.configuration).getOauthState(options)(this.fetch, this.basePath);
+    }
+
+    /**
+     * 
+     * @summary 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getUserInfo(options?: any) {
+        return DefaultApiFp(this.configuration).getUserInfo(options)(this.fetch, this.basePath);
     }
 
     /**

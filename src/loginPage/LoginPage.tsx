@@ -5,7 +5,7 @@ import { Dispatchable, StandardAction } from '../_common/action';
 import { checkPhone, parseQueryString } from '../_common/common';
 import { countdown } from '../_common/countdown';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
-import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from '../api/user/gen';
+import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from '../api/account/gen';
 import {
     apiSendLoginsSmsCode, apiSmsLogin, RootState,
 } from '../redux';
