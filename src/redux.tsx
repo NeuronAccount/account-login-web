@@ -11,7 +11,7 @@ const SEND_LOGIN_SMS_CODE_SUCCESS = 'SEND_LOGIN_SMS_CODE_SUCCESS';
 const SMS_LOGIN_FAILURE = 'SMS_LOGIN_FAILURE';
 const SMS_LOGIN_SUCCESS = 'SMS_LOGIN_SUCCESS';
 
-const accountApi = DefaultApiFactory(undefined, fetch, env.host + '/api/v1/users');
+const accountApi = DefaultApiFactory(undefined, fetch, env.host + '/api/v1/accounts');
 
 export interface RootState {
     userToken: UserToken;
