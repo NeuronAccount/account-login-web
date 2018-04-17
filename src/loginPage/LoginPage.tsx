@@ -7,7 +7,7 @@ import { countdown } from '../_common/countdown';
 import { default as TimedText, TextTimestamp } from '../_common/TimedText';
 import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from '../api/account/gen';
 import {
-    apiSendLoginsSmsCode, apiSmsLogin, RootState,
+    apiSendLoginSmsCode, apiSmsLogin, RootState,
 } from '../redux';
 
 export const MAX_LOGIN_NAME_LENGTH = 24;
@@ -20,7 +20,7 @@ interface Props {
     errorMessage: TextTimestamp;
     smsCodeSentMessage: TextTimestamp;
 
-    apiSendLoginsSmsCode: (p: sendLoginSmsCodeParams) => Dispatchable;
+    apiSendLoginSmsCode: (p: sendLoginSmsCodeParams) => Dispatchable;
     apiSmsLogin: (p: smsLoginParams) => Dispatchable;
 }
 
@@ -256,7 +256,7 @@ class LoginPage extends React.Component<Props, State> {
             this.setState({smsCodeCountdown: n});
         });
 
-        this.props.apiSendLoginsSmsCode({
+        this.props.apiSendLoginSmsCode({
             phone: loginPhone,
             captchaId: '1',
             captchaCode: '1'
@@ -302,6 +302,6 @@ const selectProps = (rootState: RootState) => ({
 });
 
 export default connect(selectProps, {
-    apiSendLoginsSmsCode,
+    apiSendLoginSmsCode,
     apiSmsLogin,
 })(LoginPage);

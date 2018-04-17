@@ -5,13 +5,16 @@ import {
     DefaultApiFactory, sendLoginSmsCodeParams, smsLoginParams, UserToken
 } from './api/account/gen';
 import { env } from './env';
+import { REDUX_STORE } from './index';
 
 const SEND_LOGIN_SMS_CODE_FAILURE = 'SEND_LOGIN_SMS_CODE_FAILURE';
 const SEND_LOGIN_SMS_CODE_SUCCESS = 'SEND_LOGIN_SMS_CODE_SUCCESS';
 const SMS_LOGIN_FAILURE = 'SMS_LOGIN_FAILURE';
 const SMS_LOGIN_SUCCESS = 'SMS_LOGIN_SUCCESS';
 
-const accountApi = DefaultApiFactory(undefined, fetch, env.host + '/api/v1/accounts');
+const accountApi = DefaultApiFactory(
+    {apiKey: () => REDUX_STORE.getState().userToken.accessToken},
+    fetch, env.host + '/api/v1/accounts');
 
 export interface RootState {
     userToken: UserToken;
@@ -19,7 +22,7 @@ export interface RootState {
     smsCodeSentMessage: TextTimestamp;
 }
 
-export const apiSendLoginsSmsCode = (p: sendLoginSmsCodeParams): Dispatchable => (dispatch) => {
+export const apiSendLoginSmsCode = (p: sendLoginSmsCodeParams): Dispatchable => (dispatch) => {
     return accountApi.sendLoginSmsCode(p.phone, p.captchaId, p.captchaCode)
         .then(() => {
             dispatch({type: SEND_LOGIN_SMS_CODE_SUCCESS});
