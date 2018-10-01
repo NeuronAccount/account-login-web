@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface Props {
     contentElement: JSX.Element;
@@ -50,7 +50,7 @@ export default class TimedComponent extends React.Component<Props, State> {
         this.setState({
             timer: 0,
             timestamp: this.props.timestamp,
-            visible: false
+            visible: false,
         });
     }
 
@@ -73,17 +73,17 @@ export default class TimedComponent extends React.Component<Props, State> {
                 if (new Date().getTime() - timestampMsec > intervalMillSec) {
                     clearInterval(timer);
                     this.setState({
+                        timer: 0,
                         visible: false,
-                        timer: 0
                     });
                 }
             },
             200);
 
         this.setState({
-            visible: true,
-            timestamp,
             timer,
+            timestamp,
+            visible: true,
         });
     }
 }

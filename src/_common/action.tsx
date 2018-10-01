@@ -1,4 +1,4 @@
-import { Dispatch } from 'react-redux';
+import { Dispatch } from "react-redux";
 
 export interface StandardAction {
     type: string;

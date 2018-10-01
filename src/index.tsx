@@ -1,13 +1,13 @@
-import { createMuiTheme, MuiThemeProvider } from 'material-ui';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter, Route } from 'react-router-dom';
-import { applyMiddleware, createStore } from 'redux';
-import { createLogger } from 'redux-logger';
-import thunk from 'redux-thunk';
-import App from './App';
-import { rootReducer, RootState } from './redux';
+import { createMuiTheme, MuiThemeProvider } from "material-ui";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { BrowserRouter, Route } from "react-router-dom";
+import { applyMiddleware, createStore } from "redux";
+import { createLogger } from "redux-logger";
+import thunk from "redux-thunk";
+import App from "./App";
+import { rootReducer, RootState } from "./redux";
 
 const theme = createMuiTheme();
 const logger = createLogger({collapsed: false});
@@ -29,5 +29,5 @@ class Root extends React.Component {
 
 ReactDOM.render(
     <Root />,
-    document.getElementById('root') as HTMLElement
+    document.getElementById("root") as HTMLElement,
 );

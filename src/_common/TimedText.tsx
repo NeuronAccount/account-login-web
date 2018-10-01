@@ -1,5 +1,5 @@
-import * as React from 'react';
-import TimedComponent from './TimedComponent';
+import * as React from "react";
+import TimedComponent from "./TimedComponent";
 
 export interface TextTimestamp {
     text: string;
@@ -13,7 +13,7 @@ export interface Props extends TextTimestamp {
 
 export default class TimedText extends React.Component<Props> {
     public render() {
-        const visible = this.props.text !== '';
+        const visible = this.props.text !== "";
 
         return (
             <div>

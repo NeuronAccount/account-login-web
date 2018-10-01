@@ -1,14 +1,14 @@
-import { Button, TextField } from 'material-ui';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { Dispatchable, StandardAction } from '../_common/action';
-import { checkPhone, parseQueryString } from '../_common/common';
-import { countdown } from '../_common/countdown';
-import { default as TimedText, TextTimestamp } from '../_common/TimedText';
-import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from '../api/account/gen';
+import { Button, TextField } from "material-ui";
+import * as React from "react";
+import { connect } from "react-redux";
+import { Dispatchable, StandardAction } from "../_common/action";
+import { checkPhone, parseQueryString } from "../_common/common";
+import { countdown } from "../_common/countdown";
+import { default as TimedText, TextTimestamp } from "../_common/TimedText";
+import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from "../api/account/gen";
 import {
     apiSendLoginSmsCode, apiSmsLogin, RootState,
-} from '../redux';
+} from "../redux";
 
 export const MAX_LOGIN_NAME_LENGTH = 24;
 export const MAX_PHONE_LENGTH = 11;
@@ -40,7 +40,7 @@ class LoginPage extends React.Component<Props, State> {
 
     public componentWillMount() {
         const queryParams = parseQueryString(window.location.search);
-        const fromOrigin = queryParams.get('fromOrigin');
+        const fromOrigin = queryParams.get("fromOrigin");
 
         this.onSmsLoginPhoneChanged = this.onSmsLoginPhoneChanged.bind(this);
         this.onSmsLoginSmsCodeChanged = this.onSmsLoginSmsCodeChanged.bind(this);
@@ -48,12 +48,12 @@ class LoginPage extends React.Component<Props, State> {
         this.onSmsLoginButtonClick = this.onSmsLoginButtonClick.bind(this);
 
         this.setState({
-            queryParams,
+            errorMessage: {text: "", timestamp: new Date()},
             fromOrigin,
-            errorMessage: {text: '', timestamp: new Date()},
-            loginPhone: '',
-            loginSmsCode: '',
-            smsCodeCountdown: 0
+            loginPhone: "",
+            loginSmsCode: "",
+            queryParams,
+            smsCodeCountdown: 0,
         });
     }
 
@@ -69,23 +69,23 @@ class LoginPage extends React.Component<Props, State> {
 
     public render() {
         const {userToken} = this.props;
-        if (userToken.accessToken !== '') {
+        if (userToken.accessToken !== "") {
             this.postLoginSuccess(userToken);
         }
 
         return (
             <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
             }}>
-                <div style={{width: '300px', marginTop: '24px'}}>
-                    <div style={{marginTop: '5px', height: '10px'}}>
+                <div style={{width: "300px", marginTop: "24px"}}>
+                    <div style={{marginTop: "5px", height: "10px"}}>
                         {this.renderErrorMessage()}
                     </div>
                     {this.renderSmsLogin()}
-                    <div style={{marginTop: '5px', height: '24px'}}>
+                    <div style={{marginTop: "5px", height: "24px"}}>
                         {this.renderSuccessLabel()}
                     </div>
                     {LoginPage.renderOauthLogin()}
@@ -102,20 +102,20 @@ class LoginPage extends React.Component<Props, State> {
                 text={text}
                 timestamp={timestamp}
                 intervalMillSec={3000}
-                style={{fontSize: '14px', color: 'red'}}
+                style={{fontSize: "14px", color: "red"}}
             />
         );
     }
 
     private renderSuccessLabel() {
         const {userToken} = this.props;
-        const succeeded = userToken && userToken.accessToken !== '';
+        const succeeded = userToken && userToken.accessToken !== "";
         if (!succeeded) {
             return null;
         }
 
         return (
-            <label style={{float: 'right', fontSize: 'x-small', color: '#888'}}>
+            <label style={{float: "right", fontSize: "x-small", color: "#888"}}>
                 登录成功
             </label>
         );
@@ -136,7 +136,7 @@ class LoginPage extends React.Component<Props, State> {
             <TextField
                 margin="normal"
                 fullWidth={true}
-                label={'手机号'}
+                label={"手机号"}
                 value={this.state.loginPhone}
                 onChange={this.onSmsLoginPhoneChanged}
             />
@@ -151,7 +151,7 @@ class LoginPage extends React.Component<Props, State> {
         return (
             <div>
                 {this.renderSmsLoginSmsCode()}
-                <div style={{height: '20px'}}>
+                <div style={{height: "20px"}}>
                     {this.renderSmsCodeSentMessage()}
                 </div>
                 {this.renderSendSmsCodeButton()}
@@ -163,8 +163,8 @@ class LoginPage extends React.Component<Props, State> {
         return (
             <TextField
                 margin="normal"
-                style={{width: '100px', float: 'left'}}
-                label={'验证码'}
+                style={{width: "100px", float: "left"}}
+                label={"验证码"}
                 value={this.state.loginSmsCode}
                 onChange={this.onSmsLoginSmsCodeChanged}
             />
@@ -184,7 +184,7 @@ class LoginPage extends React.Component<Props, State> {
                 text={text}
                 timestamp={timestamp}
                 intervalMillSec={3000}
-                style={{fontSize: '14px', color: '#BBB', float: 'right'}}
+                style={{fontSize: "14px", color: "#BBB", float: "right"}}
             />
         );
     }
@@ -196,25 +196,25 @@ class LoginPage extends React.Component<Props, State> {
     private renderSendSmsCodeButton() {
         const {smsCodeCountdown} = this.state;
         const disabled = smsCodeCountdown > 0;
-        const backgroundColor = disabled ? '#eee' : '#008888';
-        const color = disabled ? '#888' : '#fff';
+        const backgroundColor = disabled ? "#eee" : "#008888";
+        const color = disabled ? "#888" : "#fff";
 
         return (
             <Button
                 style={{
                     backgroundColor,
-                    float: 'right',
-                    marginTop: '8px',
+                    borderColor: "#eee",
+                    borderRadius: "8px",
+                    borderStyle: "solid",
+                    borderWidth: "1px",
                     color,
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    borderRadius: '8px',
-                    borderColor: '#eee'
+                    float: "right",
+                    marginTop: "8px",
                 }}
                 onClick={this.onSendLoginSmsCodeClick}
                 disabled={disabled}
             >
-                {disabled ? smsCodeCountdown + '秒后重新发送' : '发送短信验证码'}
+                {disabled ? smsCodeCountdown + "秒后重新发送" : "发送短信验证码"}
             </Button>
         );
     }
@@ -223,20 +223,20 @@ class LoginPage extends React.Component<Props, State> {
         return (
             <Button
                 style={{
-                    backgroundColor: '#008888',
-                    fontSize: '150%',
-                    color: '#fff',
-                    width: '100%',
-                    marginTop: '10px',
-                    height: '48px',
-                    borderStyle: 'solid',
-                    borderWidth: '1px',
-                    borderRadius: '8px',
-                    borderColor: '#eee'
+                    backgroundColor: "#008888",
+                    borderColor: "#eee",
+                    borderRadius: "8px",
+                    borderStyle: "solid",
+                    borderWidth: "1px",
+                    color: "#fff",
+                    fontSize: "150%",
+                    height: "48px",
+                    marginTop: "10px",
+                    width: "100%",
                 }}
                 onClick={this.onSmsLoginButtonClick}
             >
-                <label style={{fontSize: 'large'}}>授权并登录</label>
+                <label style={{fontSize: "large"}}>授权并登录</label>
             </Button>
         );
     }
@@ -245,11 +245,11 @@ class LoginPage extends React.Component<Props, State> {
         const COUNT_DOWN_SECONDS = 60;
 
         const {loginPhone} = this.state;
-        if (loginPhone === '') {
-            return this.onError('！请输入手机号');
+        if (loginPhone === "") {
+            return this.onError("！请输入手机号");
         }
         if (!checkPhone(loginPhone)) {
-            return this.onError('！手机号格式不正确');
+            return this.onError("！手机号格式不正确");
         }
 
         countdown(COUNT_DOWN_SECONDS, (n: number) => {
@@ -257,25 +257,25 @@ class LoginPage extends React.Component<Props, State> {
         });
 
         this.props.apiSendLoginSmsCode({
+            captchaCode: "1",
+            captchaId: "1",
             phone: loginPhone,
-            captchaId: '1',
-            captchaCode: '1'
         });
     }
 
     private onSmsLoginButtonClick() {
         const {loginPhone, loginSmsCode} = this.state;
-        if (loginPhone === '') {
-            return this.onError('！请输入手机号');
+        if (loginPhone === "") {
+            return this.onError("！请输入手机号");
         }
-        if (loginSmsCode === '') {
-            return this.onError('！请输入验证码');
+        if (loginSmsCode === "") {
+            return this.onError("！请输入验证码");
         }
 
         this.props.apiSmsLogin({
                 phone: loginPhone,
-                smsCode: loginSmsCode
-            }
+                smsCode: loginSmsCode,
+            },
         );
     }
 
@@ -285,20 +285,20 @@ class LoginPage extends React.Component<Props, State> {
 
     private postLoginSuccess(userToken: UserToken) {
         const {fromOrigin} = this.state;
-        if (!fromOrigin || fromOrigin === '') {
+        if (!fromOrigin || fromOrigin === "") {
             return;
         }
 
-        const loginSuccessAction: StandardAction = {type: 'onLoginCallback', payload: userToken};
+        const loginSuccessAction: StandardAction = {type: "onLoginCallback", payload: userToken};
 
         window.parent.postMessage(loginSuccessAction, decodeURIComponent(fromOrigin));
     }
 }
 
 const selectProps = (rootState: RootState) => ({
-    userToken: rootState.userToken,
     errorMessage: rootState.errorMessage,
     smsCodeSentMessage: rootState.smsCodeSentMessage,
+    userToken: rootState.userToken,
 });
 
 export default connect(selectProps, {

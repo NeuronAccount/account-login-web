@@ -1,7 +1,7 @@
-import { Dispatchable, StandardAction } from './action';
-import { TextTimestamp } from './TimedText';
+import { Dispatchable, StandardAction } from "./action";
+import { TextTimestamp } from "./TimedText";
 
-const ACTION_ERROR_MESSAGE = 'ACTION_ERROR_MESSAGE';
+const ACTION_ERROR_MESSAGE = "ACTION_ERROR_MESSAGE";
 export const onErrorMessage = (text: string): Dispatchable => (dispatch) => {
     return dispatch({type: ACTION_ERROR_MESSAGE, payload: {text, timestamp: new Date()}});
 };
@@ -12,12 +12,12 @@ export const onApiError = (err: any, message: string): Dispatchable => (dispatch
         return; // skip Unauthorized error
     }
 
-    const text = err.toString() === 'TypeError: Network request failed'
-        ? '网络连接失败:' + message : (err.message ? err.message : err.toString());
+    const text = err.toString() === "TypeError: Network request failed"
+        ? "网络连接失败:" + message : (err.message ? err.message : err.toString());
     dispatch(onErrorMessage(text));
 };
 
-const initErrorMessage: TextTimestamp = {text: '', timestamp: new Date()};
+const initErrorMessage: TextTimestamp = {text: "", timestamp: new Date()};
 export const errorMessageReducer = (state: TextTimestamp= initErrorMessage,
                                     action: StandardAction): TextTimestamp => {
     switch (action.type) {
