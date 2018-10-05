@@ -1,14 +1,12 @@
-import { Button, TextField } from "material-ui";
+import { Button, TextField } from "@material-ui/core";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Dispatchable, StandardAction } from "../_common/action";
+import { StandardAction } from "../_common/action";
 import { checkPhone, parseQueryString } from "../_common/common";
 import { countdown } from "../_common/countdown";
 import { default as TimedText, TextTimestamp } from "../_common/TimedText";
-import { sendLoginSmsCodeParams, smsLoginParams, UserToken } from "../api/account/gen";
-import {
-    apiSendLoginSmsCode, apiSmsLogin, RootState,
-} from "../redux";
+import {sendLoginSmsCodeParams, smsLoginParams, UserToken} from "../api/account/gen";
+import {RootState, sendLoginSmsCode, smsLogin} from "../redux";
 
 export const MAX_LOGIN_NAME_LENGTH = 24;
 export const MAX_PHONE_LENGTH = 11;
@@ -20,8 +18,8 @@ interface Props {
     errorMessage: TextTimestamp;
     smsCodeSentMessage: TextTimestamp;
 
-    apiSendLoginSmsCode: (p: sendLoginSmsCodeParams) => Dispatchable;
-    apiSmsLogin: (p: smsLoginParams) => Dispatchable;
+    sendLoginSmsCode: (p: sendLoginSmsCodeParams) => void
+    smsLogin: (p: smsLoginParams) => void
 }
 
 interface State {
@@ -256,7 +254,7 @@ class LoginPage extends React.Component<Props, State> {
             this.setState({smsCodeCountdown: n});
         });
 
-        this.props.apiSendLoginSmsCode({
+        this.props.sendLoginSmsCode({
             captchaCode: "1",
             captchaId: "1",
             phone: loginPhone,
@@ -272,11 +270,10 @@ class LoginPage extends React.Component<Props, State> {
             return this.onError("！请输入验证码");
         }
 
-        this.props.apiSmsLogin({
-                phone: loginPhone,
-                smsCode: loginSmsCode,
-            },
-        );
+        this.props.smsLogin({
+            phone: loginPhone,
+            smsCode: loginSmsCode,
+        });
     }
 
     private onError(message: string) {
@@ -289,7 +286,7 @@ class LoginPage extends React.Component<Props, State> {
             return;
         }
 
-        const loginSuccessAction: StandardAction = {type: "onLoginCallback", payload: userToken};
+        const loginSuccessAction: StandardAction<UserToken> = {type: "onLoginCallback", payload: userToken};
 
         window.parent.postMessage(loginSuccessAction, decodeURIComponent(fromOrigin));
     }
@@ -302,6 +299,6 @@ const selectProps = (rootState: RootState) => ({
 });
 
 export default connect(selectProps, {
-    apiSendLoginSmsCode,
-    apiSmsLogin,
+    sendLoginSmsCode,
+    smsLogin
 })(LoginPage);

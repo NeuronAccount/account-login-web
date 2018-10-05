@@ -272,6 +272,57 @@ export interface UserToken {
 }
 
 
+export interface bindPhoneParams {
+    phone: string;
+    smsCode: string;
+}
+export interface getOperationListParams {
+    operationType?: string;
+    pageToken?: string;
+    pageSize?: string;
+}
+export interface oauthJumpParams {
+    redirectUri: string;
+    authorizationCode: string;
+    state: string;
+}
+export interface phonePasswordLoginParams {
+    phone: string;
+    passwordHash1: string;
+}
+export interface refreshTokenParams {
+    refreshToken: string;
+}
+export interface resetPasswordParams {
+    phone: string;
+    smsCode: string;
+    newPasswordHash1: string;
+}
+export interface sendLoginSmsCodeParams {
+    phone: string;
+    captchaId: string;
+    captchaCode: string;
+}
+export interface sendSmsCodeParams {
+    scene: string;
+    phone: string;
+    captchaId: string;
+    captchaCode: string;
+}
+export interface setUserIconParams {
+    userIcon: string;
+}
+export interface setUserNameParams {
+    userName: string;
+}
+export interface smsLoginParams {
+    phone: string;
+    smsCode: string;
+}
+export interface unbindPhoneParams {
+    phone: string;
+    smsCode: string;
+}
 /**
  * DefaultApi - fetch parameter creator
  * @export
@@ -293,10 +344,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -334,10 +384,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             if (phone !== undefined) {
@@ -373,10 +422,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -407,10 +455,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             if (operationType !== undefined) {
@@ -450,10 +497,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -481,10 +527,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -778,10 +823,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             if (scene !== undefined) {
@@ -830,10 +874,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             if (userIcon !== undefined) {
@@ -870,10 +913,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             if (userName !== undefined) {
@@ -946,10 +988,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -987,10 +1028,9 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
 
             // authentication Bearer required
             if (configuration && configuration.apiKey) {
-                const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-					? configuration.apiKey("Authorization")
-					: configuration.apiKey;
-                localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                localVarHeaderParameter["Authorization"] = typeof configuration.apiKey === 'function'
+                    ? configuration.apiKey("Authorization")
+                    : configuration.apiKey;
             }
 
             if (phone !== undefined) {
@@ -1014,18 +1054,8 @@ export const DefaultApiFetchParamCreator = function (configuration?: Configurati
     }
 };
 
-/**
- * DefaultApi - functional programming interface
- * @export
- */
 export const DefaultApiFp = function(configuration?: Configuration) {
     return {
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         bindOauthAccount(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).bindOauthAccount(options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1038,14 +1068,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         bindPhone(phone: string, smsCode: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).bindPhone(phone, smsCode, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1058,12 +1080,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         getAccountInfo(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<AccountInfo> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).getAccountInfo(options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1076,15 +1092,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} [operationType] 
-         * @param {string} [pageToken] 
-         * @param {string} [pageSize] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         getOperationList(operationType?: string, pageToken?: string, pageSize?: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<OperationListResponse> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).getOperationList(operationType, pageToken, pageSize, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1097,12 +1104,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         getUserInfo(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserInfo> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).getUserInfo(options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1115,12 +1116,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         logout(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).logout(options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1133,15 +1128,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} redirectUri 
-         * @param {string} authorizationCode 
-         * @param {string} state 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         oauthJump(redirectUri: string, authorizationCode: string, state: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserToken> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).oauthJump(redirectUri, authorizationCode, state, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1154,12 +1140,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         oauthState(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<string> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).oauthState(options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1172,14 +1152,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} passwordHash1 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         phonePasswordLogin(phone: string, passwordHash1: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserToken> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).phonePasswordLogin(phone, passwordHash1, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1192,13 +1164,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} refreshToken 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         refreshToken(refreshToken: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserToken> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).refreshToken(refreshToken, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1211,15 +1176,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {string} newPasswordHash1 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         resetPassword(phone: string, smsCode: string, newPasswordHash1: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).resetPassword(phone, smsCode, newPasswordHash1, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1232,15 +1188,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} captchaId 
-         * @param {string} captchaCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         sendLoginSmsCode(phone: string, captchaId: string, captchaCode: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).sendLoginSmsCode(phone, captchaId, captchaCode, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1253,16 +1200,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} scene 
-         * @param {string} phone 
-         * @param {string} captchaId 
-         * @param {string} captchaCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         sendSmsCode(scene: string, phone: string, captchaId: string, captchaCode: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).sendSmsCode(scene, phone, captchaId, captchaCode, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1275,13 +1212,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} userIcon 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         setUserIcon(userIcon: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).setUserIcon(userIcon, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1294,13 +1224,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} userName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         setUserName(userName: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).setUserName(userName, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1313,14 +1236,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary sms login
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         smsLogin(phone: string, smsCode: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<UserToken> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).smsLogin(phone, smsCode, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1333,12 +1248,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         unbindOauthAccount(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).unbindOauthAccount(options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1351,14 +1260,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 });
             };
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         unbindPhone(phone: string, smsCode: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Response> {
             const localVarFetchArgs = DefaultApiFetchParamCreator(configuration).unbindPhone(phone, smsCode, options);
             return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
@@ -1374,488 +1275,171 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     }
 };
 
-/**
- * DefaultApi - factory interface
- * @export
- */
 export const DefaultApiFactory = function (configuration?: Configuration, fetch?: FetchAPI, basePath?: string) {
     return {
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        bindOauthAccount(options?: any) {
-            return DefaultApiFp(configuration).bindOauthAccount(options)(fetch, basePath);
+        bindOauthAccount(options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).bindOauthAccount(options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        bindPhone(phone: string, smsCode: string, options?: any) {
-            return DefaultApiFp(configuration).bindPhone(phone, smsCode, options)(fetch, basePath);
+        bindPhone(p: bindPhoneParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).bindPhone(p.phone, p.smsCode, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getAccountInfo(options?: any) {
-            return DefaultApiFp(configuration).getAccountInfo(options)(fetch, basePath);
+        getAccountInfo(options?: any): Promise< {data: AccountInfo }|{err:any}> {
+            return DefaultApiFp(configuration).getAccountInfo(options)(fetch, basePath)
+                .then((data:AccountInfo)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} [operationType] 
-         * @param {string} [pageToken] 
-         * @param {string} [pageSize] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getOperationList(operationType?: string, pageToken?: string, pageSize?: string, options?: any) {
-            return DefaultApiFp(configuration).getOperationList(operationType, pageToken, pageSize, options)(fetch, basePath);
+        getOperationList(p: getOperationListParams, options?: any): Promise< {data: OperationListResponse }|{err:any}> {
+            return DefaultApiFp(configuration).getOperationList(p.operationType, p.pageToken, p.pageSize, options)(fetch, basePath)
+                .then((data:OperationListResponse)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getUserInfo(options?: any) {
-            return DefaultApiFp(configuration).getUserInfo(options)(fetch, basePath);
+        getUserInfo(options?: any): Promise< {data: UserInfo }|{err:any}> {
+            return DefaultApiFp(configuration).getUserInfo(options)(fetch, basePath)
+                .then((data:UserInfo)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        logout(options?: any) {
-            return DefaultApiFp(configuration).logout(options)(fetch, basePath);
+        logout(options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).logout(options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} redirectUri 
-         * @param {string} authorizationCode 
-         * @param {string} state 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        oauthJump(redirectUri: string, authorizationCode: string, state: string, options?: any) {
-            return DefaultApiFp(configuration).oauthJump(redirectUri, authorizationCode, state, options)(fetch, basePath);
+        oauthJump(p: oauthJumpParams, options?: any): Promise< {data: UserToken }|{err:any}> {
+            return DefaultApiFp(configuration).oauthJump(p.redirectUri, p.authorizationCode, p.state, options)(fetch, basePath)
+                .then((data:UserToken)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        oauthState(options?: any) {
-            return DefaultApiFp(configuration).oauthState(options)(fetch, basePath);
+        oauthState(options?: any): Promise< {data: string }|{err:any}> {
+            return DefaultApiFp(configuration).oauthState(options)(fetch, basePath)
+                .then((data:string)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} passwordHash1 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        phonePasswordLogin(phone: string, passwordHash1: string, options?: any) {
-            return DefaultApiFp(configuration).phonePasswordLogin(phone, passwordHash1, options)(fetch, basePath);
+        phonePasswordLogin(p: phonePasswordLoginParams, options?: any): Promise< {data: UserToken }|{err:any}> {
+            return DefaultApiFp(configuration).phonePasswordLogin(p.phone, p.passwordHash1, options)(fetch, basePath)
+                .then((data:UserToken)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} refreshToken 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        refreshToken(refreshToken: string, options?: any) {
-            return DefaultApiFp(configuration).refreshToken(refreshToken, options)(fetch, basePath);
+        refreshToken(p: refreshTokenParams, options?: any): Promise< {data: UserToken }|{err:any}> {
+            return DefaultApiFp(configuration).refreshToken(p.refreshToken, options)(fetch, basePath)
+                .then((data:UserToken)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {string} newPasswordHash1 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        resetPassword(phone: string, smsCode: string, newPasswordHash1: string, options?: any) {
-            return DefaultApiFp(configuration).resetPassword(phone, smsCode, newPasswordHash1, options)(fetch, basePath);
+        resetPassword(p: resetPasswordParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).resetPassword(p.phone, p.smsCode, p.newPasswordHash1, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} captchaId 
-         * @param {string} captchaCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        sendLoginSmsCode(phone: string, captchaId: string, captchaCode: string, options?: any) {
-            return DefaultApiFp(configuration).sendLoginSmsCode(phone, captchaId, captchaCode, options)(fetch, basePath);
+        sendLoginSmsCode(p: sendLoginSmsCodeParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).sendLoginSmsCode(p.phone, p.captchaId, p.captchaCode, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} scene 
-         * @param {string} phone 
-         * @param {string} captchaId 
-         * @param {string} captchaCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        sendSmsCode(scene: string, phone: string, captchaId: string, captchaCode: string, options?: any) {
-            return DefaultApiFp(configuration).sendSmsCode(scene, phone, captchaId, captchaCode, options)(fetch, basePath);
+        sendSmsCode(p: sendSmsCodeParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).sendSmsCode(p.scene, p.phone, p.captchaId, p.captchaCode, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} userIcon 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        setUserIcon(userIcon: string, options?: any) {
-            return DefaultApiFp(configuration).setUserIcon(userIcon, options)(fetch, basePath);
+        setUserIcon(p: setUserIconParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).setUserIcon(p.userIcon, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} userName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        setUserName(userName: string, options?: any) {
-            return DefaultApiFp(configuration).setUserName(userName, options)(fetch, basePath);
+        setUserName(p: setUserNameParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).setUserName(p.userName, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary sms login
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        smsLogin(phone: string, smsCode: string, options?: any) {
-            return DefaultApiFp(configuration).smsLogin(phone, smsCode, options)(fetch, basePath);
+        smsLogin(p: smsLoginParams, options?: any): Promise< {data: UserToken }|{err:any}> {
+            return DefaultApiFp(configuration).smsLogin(p.phone, p.smsCode, options)(fetch, basePath)
+                .then((data:UserToken)=>{
+                    return {data,err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        unbindOauthAccount(options?: any) {
-            return DefaultApiFp(configuration).unbindOauthAccount(options)(fetch, basePath);
+        unbindOauthAccount(options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).unbindOauthAccount(options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
-        /**
-         * 
-         * @summary 
-         * @param {string} phone 
-         * @param {string} smsCode 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        unbindPhone(phone: string, smsCode: string, options?: any) {
-            return DefaultApiFp(configuration).unbindPhone(phone, smsCode, options)(fetch, basePath);
+        unbindPhone(p: unbindPhoneParams, options?: any): Promise<{err:any}> {
+            return DefaultApiFp(configuration).unbindPhone(p.phone, p.smsCode, options)(fetch, basePath)
+                .then(()=>{
+                    return {err:null}
+                })
+                .catch((err:any)=>{
+                    return {err}
+                })
         },
     };
 };
-
-/**
- * DefaultApi - object-oriented interface
- * @export
- * @class DefaultApi
- * @extends {BaseAPI}
- */
-export class DefaultApi extends BaseAPI {
-    /**
-     * 
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public bindOauthAccount(options?: any) {
-        return DefaultApiFp(this.configuration).bindOauthAccount(options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} phone 
-     * @param {string} smsCode 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public bindPhone(phone: string, smsCode: string, options?: any) {
-        return DefaultApiFp(this.configuration).bindPhone(phone, smsCode, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public getAccountInfo(options?: any) {
-        return DefaultApiFp(this.configuration).getAccountInfo(options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} [operationType] 
-     * @param {string} [pageToken] 
-     * @param {string} [pageSize] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public getOperationList(operationType?: string, pageToken?: string, pageSize?: string, options?: any) {
-        return DefaultApiFp(this.configuration).getOperationList(operationType, pageToken, pageSize, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public getUserInfo(options?: any) {
-        return DefaultApiFp(this.configuration).getUserInfo(options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public logout(options?: any) {
-        return DefaultApiFp(this.configuration).logout(options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} redirectUri 
-     * @param {string} authorizationCode 
-     * @param {string} state 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public oauthJump(redirectUri: string, authorizationCode: string, state: string, options?: any) {
-        return DefaultApiFp(this.configuration).oauthJump(redirectUri, authorizationCode, state, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public oauthState(options?: any) {
-        return DefaultApiFp(this.configuration).oauthState(options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} phone 
-     * @param {string} passwordHash1 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public phonePasswordLogin(phone: string, passwordHash1: string, options?: any) {
-        return DefaultApiFp(this.configuration).phonePasswordLogin(phone, passwordHash1, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} refreshToken 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public refreshToken(refreshToken: string, options?: any) {
-        return DefaultApiFp(this.configuration).refreshToken(refreshToken, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} phone 
-     * @param {string} smsCode 
-     * @param {string} newPasswordHash1 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public resetPassword(phone: string, smsCode: string, newPasswordHash1: string, options?: any) {
-        return DefaultApiFp(this.configuration).resetPassword(phone, smsCode, newPasswordHash1, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} phone 
-     * @param {string} captchaId 
-     * @param {string} captchaCode 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public sendLoginSmsCode(phone: string, captchaId: string, captchaCode: string, options?: any) {
-        return DefaultApiFp(this.configuration).sendLoginSmsCode(phone, captchaId, captchaCode, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} scene 
-     * @param {string} phone 
-     * @param {string} captchaId 
-     * @param {string} captchaCode 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public sendSmsCode(scene: string, phone: string, captchaId: string, captchaCode: string, options?: any) {
-        return DefaultApiFp(this.configuration).sendSmsCode(scene, phone, captchaId, captchaCode, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} userIcon 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public setUserIcon(userIcon: string, options?: any) {
-        return DefaultApiFp(this.configuration).setUserIcon(userIcon, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} userName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public setUserName(userName: string, options?: any) {
-        return DefaultApiFp(this.configuration).setUserName(userName, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary sms login
-     * @param {string} phone 
-     * @param {string} smsCode 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public smsLogin(phone: string, smsCode: string, options?: any) {
-        return DefaultApiFp(this.configuration).smsLogin(phone, smsCode, options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public unbindOauthAccount(options?: any) {
-        return DefaultApiFp(this.configuration).unbindOauthAccount(options)(this.fetch, this.basePath);
-    }
-
-    /**
-     * 
-     * @summary 
-     * @param {string} phone 
-     * @param {string} smsCode 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public unbindPhone(phone: string, smsCode: string, options?: any) {
-        return DefaultApiFp(this.configuration).unbindPhone(phone, smsCode, options)(this.fetch, this.basePath);
-    }
-
-}
-
-export interface bindPhoneParams {
-    phone: string;
-    smsCode: string;
-}
-export interface getOperationListParams {
-    operationType?: string;
-    pageToken?: string;
-    pageSize?: string;
-}
-export interface oauthJumpParams {
-    redirectUri: string;
-    authorizationCode: string;
-    state: string;
-}
-export interface phonePasswordLoginParams {
-    phone: string;
-    passwordHash1: string;
-}
-export interface refreshTokenParams {
-    refreshToken: string;
-}
-export interface resetPasswordParams {
-    phone: string;
-    smsCode: string;
-    newPasswordHash1: string;
-}
-export interface sendLoginSmsCodeParams {
-    phone: string;
-    captchaId: string;
-    captchaCode: string;
-}
-export interface sendSmsCodeParams {
-    scene: string;
-    phone: string;
-    captchaId: string;
-    captchaCode: string;
-}
-export interface setUserIconParams {
-    userIcon: string;
-}
-export interface setUserNameParams {
-    userName: string;
-}
-export interface smsLoginParams {
-    phone: string;
-    smsCode: string;
-}
-export interface unbindPhoneParams {
-    phone: string;
-    smsCode: string;
-}
 
 

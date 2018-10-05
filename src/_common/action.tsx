@@ -1,9 +1,5 @@
-import { Dispatch } from "react-redux";
-
-export interface StandardAction {
+export interface StandardAction<TPayload> {
     type: string;
     error?: boolean;
-    payload?: any;
+    payload?: TPayload | any;
 }
-
-export type Dispatchable= (dispatch: Dispatch<StandardAction>) => void;

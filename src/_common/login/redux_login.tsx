@@ -1,17 +1,17 @@
-import { Store } from "react-redux";
 import { combineReducers } from "redux";
+import {put} from "redux-saga/effects";
 import { env } from "../../env";
-import { Dispatchable, StandardAction } from "../action";
+import { StandardAction } from "../action";
 import { onApiError, onErrorMessage } from "../redux_error";
 import {DefaultApiFactory as UserPrivateApi, Token } from "./user-private/gen";
 
 const userPrivateApiHost = env.host + "/api-private/v1/users";
 const userPrivateApi = UserPrivateApi(undefined, fetch, userPrivateApiHost);
 
-const ACTION_LOGIN_SUCCESS = "ACTION_LOGIN_SUCCESS";
-const ACTION_USER_REFRESH_TOKEN = "ACTION_USER_REFRESH_TOKEN";
-const ACTION_USER_LOGOUT_SUCCESS = "ACTION_USER_LOGOUT_SUCCESS";
-const ACTION_REQUIRE_LOGIN = "ACTION_REQUIRE_LOGIN";
+export const ACTION_LOGIN_SUCCESS = "ACTION_LOGIN_SUCCESS";
+export const ACTION_USER_REFRESH_TOKEN = "ACTION_USER_REFRESH_TOKEN";
+export const ACTION_USER_LOGOUT_SUCCESS = "ACTION_USER_LOGOUT_SUCCESS";
+export const ACTION_REQUIRE_LOGIN = "ACTION_REQUIRE_LOGIN";
 
 export interface User {
     userID: string;
@@ -20,7 +20,7 @@ export interface User {
 }
 
 export const userReducer = combineReducers<User>({
-    userID: (state: string= "", action: StandardAction): string => {
+    userID: (state: string= "", action: StandardAction<any>): string => {
         switch (action.type) {
             case ACTION_LOGIN_SUCCESS:
                 return action.payload.userID;
@@ -32,7 +32,7 @@ export const userReducer = combineReducers<User>({
                 return state;
         }
     },
-    accessToken: (state: string = "", action: StandardAction): string => {
+    accessToken: (state: string = "", action: StandardAction<any>): string => {
         switch (action.type) {
             case ACTION_LOGIN_SUCCESS:
                 return action.payload.accessToken;
@@ -46,7 +46,7 @@ export const userReducer = combineReducers<User>({
                 return state;
         }
     },
-    refreshToken: (state: string = "", action: StandardAction): string => {
+    refreshToken: (state: string = "", action: StandardAction<any>): string => {
         switch (action.type) {
             case ACTION_LOGIN_SUCCESS:
                 return action.payload.refreshToken;
@@ -62,17 +62,13 @@ export const userReducer = combineReducers<User>({
     },
 });
 
-export const onLoginCallbackDispatch = (user: User): Dispatchable => (dispatch) => {
-    dispatch({type: ACTION_LOGIN_SUCCESS, payload: user});
-};
-
-export const apiUserLogout = (store: Store<{user: User}>): Dispatchable => (dispatch) => {
-    const {accessToken, refreshToken} = store.getState().user;
+export const apiUserLogout = (user: User) => {
+    const {accessToken, refreshToken} = user;
     return userPrivateApi.logout(accessToken, refreshToken).then(() => {
-        dispatch(onErrorMessage("您已退出登录"));
-        dispatch({type: ACTION_USER_LOGOUT_SUCCESS});
+        onErrorMessage("您已退出登录");
+        put({type: ACTION_USER_LOGOUT_SUCCESS});
     }).catch((err) => {
-        dispatch(onApiError(err, userPrivateApiHost + "/logout"));
+        onApiError(err, userPrivateApiHost + "/logout");
     });
 };
 
@@ -81,37 +77,37 @@ const isUnauthorizedError = (err: any): boolean => {
     return status === 401;
 };
 
-const apiRefreshUserToken = (store: Store<{user: User}>, refreshToken: string): Promise<void> => {
+const apiRefreshUserToken = (refreshToken: string): Promise<void> => {
     return userPrivateApi.refreshToken(refreshToken).then((data: Token) => {
-        store.dispatch({type: ACTION_USER_REFRESH_TOKEN, payload: data});
+        put({type: ACTION_USER_REFRESH_TOKEN, payload: data});
     }).catch((err) => {
-        store.dispatch(onApiError(err, userPrivateApiHost + "refreshToken"));
+        onApiError(err, userPrivateApiHost + "refreshToken");
     });
 };
 
-export const apiCall = (store: Store<{user: User}>, f: () => Promise<any>): void => {
+export const apiCall = (user: User, f: () => Promise<any>): void => {
     f().then(() => {
         console.log("progress end"); // todo 防止同时刷新
     }).catch((err) => {
         if (!isUnauthorizedError(err)) {
-            store.dispatch(onApiError(err, ""));
+            onApiError(err, "");
             return null;
         }
 
-        const {refreshToken} = store.getState().user;
+        const {refreshToken} = user;
         if (!refreshToken) {
-            store.dispatch({type: ACTION_REQUIRE_LOGIN});
+            put({type: ACTION_REQUIRE_LOGIN});
             return null;
         }
 
-        return apiRefreshUserToken(store, refreshToken).then(() => {
+        return apiRefreshUserToken(refreshToken).then(() => {
             return f().catch((errAgain: any) => {
                 if (!isUnauthorizedError(errAgain)) {
-                    store.dispatch(onApiError(errAgain, ""));
+                    onApiError(errAgain, "");
                     return;
                 }
 
-                store.dispatch({type: ACTION_REQUIRE_LOGIN});
+                put({type: ACTION_REQUIRE_LOGIN});
             });
         });
     });

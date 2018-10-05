@@ -1,13 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Dispatchable } from "../action";
-import { onLoginCallbackDispatch, User } from "./redux_login";
+import {put} from "redux-saga/effects";
+import {ACTION_LOGIN_SUCCESS, User} from "./redux_login";
 
 export interface Props {
     loginUrl: string;
     style?: React.CSSProperties;
     onLoginCallback: (user: User) => void;
-    onLoginCallbackDispatch: (user: User) => Dispatchable;
 }
 
 const DefaultStyle: React.CSSProperties = {
@@ -49,7 +48,7 @@ class LoginFrame extends React.Component<Props> {
             case "onLoginCallback":
                 const {userID, accessToken, refreshToken} = data.payload;
                 const user: User = {userID, accessToken, refreshToken};
-                this.props.onLoginCallbackDispatch(user);
+                put({type: ACTION_LOGIN_SUCCESS, payload: user});
                 this.props.onLoginCallback(user);
                 break;
             default:
@@ -59,5 +58,4 @@ class LoginFrame extends React.Component<Props> {
 }
 
 export default connect(null, {
-    onLoginCallbackDispatch,
 })(LoginFrame);
